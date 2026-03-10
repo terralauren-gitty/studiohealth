@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudioHealth — Vancouver's Favourite Alternative Health Clinic</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #6B7C5E;
+    --sage-light: #8FA07F;
+    --cream: #F7F3EE;
+    --warm-white: #FDFAF6;
+    --charcoal: #2C2C2A;
+    --stone: #9A9488;
+    --terracotta: #C4714A;
+    --soft-gold: #C9A96E;
+    --mist: #E8EDE4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--warm-white);
+    color: var(--charcoal);
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.4rem 3rem;
+    background: rgba(253, 250, 246, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(107, 124, 94, 0.12);
+    transition: padding 0.3s;
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; font-weight: 400; letter-spacing: 0.04em;
+    color: var(--charcoal); text-decoration: none;
+  }
+  .nav-logo span { color: var(--sage); }
+
+  .nav-links {
+    display: flex; gap: 2.2rem; list-style: none; align-items: center;
+  }
+  .nav-links a {
+    font-size: 0.82rem; font-weight: 400; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--charcoal); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--sage); }
+
+  .nav-cta {
+    background: var(--sage); color: white !important;
+    padding: 0.65rem 1.6rem; border-radius: 2px;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--charcoal) !important; color: white !important; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 9rem 4rem 5rem 5rem;
+    background: var(--warm-white);
+    position: relative; z-index: 2;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--sage);
+    margin-bottom: 1.6rem;
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block; width: 2rem; height: 1px; background: var(--sage);
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 5vw, 5.5rem);
+    font-weight: 300; line-height: 1.1;
+    color: var(--charcoal);
+    margin-bottom: 1.8rem;
+  }
+  .hero-title em {
+    font-style: italic; color: var(--sage);
+  }
+
+  .hero-sub {
+    font-size: 1rem; line-height: 1.75; color: var(--stone);
+    max-width: 38ch; margin-bottom: 3rem; font-weight: 300;
+  }
+
+  .hero-actions {
+    display: flex; gap: 1.2rem; flex-wrap: wrap; align-items: center;
+  }
+
+  .btn-primary {
+    background: var(--sage); color: white;
+    padding: 1rem 2.4rem; border: none; border-radius: 2px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer; text-decoration: none;
+    display: inline-block;
+    transition: background 0.25s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--charcoal); transform: translateY(-1px); }
+
+  .btn-ghost {
+    color: var(--charcoal);
+    padding: 1rem 2.4rem; border: 1px solid rgba(44,44,42,0.25); border-radius: 2px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer; text-decoration: none;
+    display: inline-block;
+    transition: border-color 0.25s, color 0.25s;
+    background: transparent;
+  }
+  .btn-ghost:hover { border-color: var(--sage); color: var(--sage); }
+
+  .hero-awards {
+    display: flex; gap: 1.5rem; margin-top: 3.5rem; align-items: center;
+  }
+  .award-badge {
+    background: var(--mist);
+    border: 1px solid rgba(107,124,94,0.2);
+    border-radius: 4px; padding: 0.7rem 1rem;
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em;
+    color: var(--sage); text-align: center; line-height: 1.4;
+  }
+  .award-badge strong { display: block; font-size: 0.95rem; font-weight: 600; color: var(--charcoal); }
+
+  .hero-right {
+    position: relative; overflow: hidden;
+  }
+
+  .hero-image-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--mist) 0%, #d4e0cc 40%, #b8cdb0 100%);
+  }
+
+  .hero-decorative {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 30% 50%, rgba(107,124,94,0.15) 0%, transparent 60%),
+      radial-gradient(circle at 80% 20%, rgba(201,169,110,0.1) 0%, transparent 50%);
+  }
+
+  .hero-botanical {
+    position: absolute; bottom: -2rem; right: -3rem;
+    width: 70%; opacity: 0.12;
+    font-size: 22rem; line-height: 1;
+    color: var(--sage);
+    font-family: serif;
+    user-select: none;
+  }
+
+  .hero-card {
+    position: absolute; bottom: 3rem; left: 3rem;
+    background: rgba(253, 250, 246, 0.95);
+    backdrop-filter: blur(8px);
+    border-radius: 4px; padding: 1.5rem 2rem;
+    border-left: 3px solid var(--sage);
+    box-shadow: 0 8px 40px rgba(44,44,42,0.12);
+  }
+  .hero-card p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem; font-style: italic; color: var(--charcoal);
+    line-height: 1.5; max-width: 28ch;
+  }
+  .hero-card cite {
+    display: block; margin-top: 0.6rem;
+    font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--stone); font-style: normal;
+  }
+
+  /* ─── STATS BAR ─── */
+  .stats-bar {
+    background: var(--charcoal);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    divide: solid;
+  }
+  .stat {
+    padding: 2.5rem 2rem; text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem; font-weight: 300; color: var(--soft-gold);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(255,255,255,0.5); margin-top: 0.5rem;
+  }
+
+  /* ─── SECTION GENERIC ─── */
+  section { padding: 7rem 5rem; }
+
+  .section-eyebrow {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--sage);
+    display: flex; align-items: center; gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+  .section-eyebrow::after {
+    content: ''; flex: 1; max-width: 3rem; height: 1px; background: var(--sage);
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 3.5vw, 3.5rem);
+    font-weight: 300; line-height: 1.15; color: var(--charcoal);
+  }
+  .section-title em { font-style: italic; color: var(--sage); }
+
+  /* ─── ABOUT ─── */
+  .about {
+    background: var(--cream);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem;
+    align-items: center;
+  }
+
+  .about-text { }
+  .about-text p {
+    margin-top: 1.5rem; font-size: 1.05rem; line-height: 1.85;
+    color: var(--stone); font-weight: 300;
+  }
+
+  .about-visual {
+    position: relative;
+  }
+
+  .about-img-placeholder {
+    width: 100%; aspect-ratio: 4/5;
+    background: linear-gradient(145deg, var(--mist), #cdd8c5);
+    border-radius: 2px; overflow: hidden; position: relative;
+  }
+
+  .about-img-inner {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 40% 60%, rgba(107,124,94,0.3) 0%, transparent 60%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 6rem; color: rgba(107,124,94,0.2);
+  }
+
+  .about-accent {
+    position: absolute; bottom: -2rem; left: -2rem;
+    width: 60%; aspect-ratio: 1;
+    border: 1px solid rgba(107,124,94,0.2);
+    border-radius: 2px; z-index: -1;
+  }
+
+  .about-accent2 {
+    position: absolute; top: -1.5rem; right: -1.5rem;
+    width: 40%; height: 40%;
+    background: var(--mist); border-radius: 2px;
+    z-index: -1;
+  }
+
+  /* ─── SERVICES ─── */
+  .services { background: var(--warm-white); }
+
+  .services-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 4rem;
+  }
+
+  .services-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px;
+    background: rgba(107,124,94,0.15);
+  }
+
+  .service-card {
+    background: var(--warm-white);
+    padding: 3rem 2.5rem;
+    transition: background 0.3s;
+    cursor: pointer; position: relative; overflow: hidden;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: var(--sage); transform: scaleX(0); transform-origin: left;
+    transition: transform 0.35s;
+  }
+  .service-card:hover { background: var(--mist); }
+  .service-card:hover::before { transform: scaleX(1); }
+
+  .service-icon {
+    width: 3rem; height: 3rem; margin-bottom: 1.5rem;
+    background: var(--mist); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; transition: background 0.3s;
+  }
+  .service-card:hover .service-icon { background: rgba(107,124,94,0.2); }
+
+  .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 400; margin-bottom: 0.8rem;
+    color: var(--charcoal);
+  }
+  .service-desc {
+    font-size: 0.9rem; line-height: 1.7; color: var(--stone); font-weight: 300;
+  }
+
+  .service-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    margin-top: 1.5rem;
+    font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--sage); text-decoration: none; font-weight: 500;
+    transition: gap 0.2s;
+  }
+  .service-link:hover { gap: 0.8rem; }
+
+  /* ─── WHY US ─── */
+  .why {
+    background: var(--sage);
+    display: grid; grid-template-columns: 1fr 1.6fr; gap: 5rem;
+    align-items: center;
+  }
+
+  .why-left .section-eyebrow { color: rgba(255,255,255,0.6); }
+  .why-left .section-eyebrow::after { background: rgba(255,255,255,0.3); }
+  .why-left .section-title { color: white; }
+  .why-left .section-title em { color: var(--soft-gold); }
+
+  .why-right {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+  }
+
+  .why-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px; padding: 2rem;
+    transition: background 0.3s;
+  }
+  .why-card:hover { background: rgba(255,255,255,0.18); }
+
+  .why-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; color: var(--soft-gold); margin-bottom: 1rem;
+  }
+  .why-title {
+    font-size: 0.95rem; font-weight: 500; color: white; margin-bottom: 0.6rem;
+  }
+  .why-desc {
+    font-size: 0.85rem; line-height: 1.65;
+    color: rgba(255,255,255,0.65); font-weight: 300;
+  }
+
+  /* ─── TEAM TEASER ─── */
+  .team { background: var(--cream); }
+  .team-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 3.5rem;
+  }
+  .team-header a {
+    font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--sage); text-decoration: none; font-weight: 500;
+  }
+
+  .team-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+  }
+
+  .team-card {
+    text-align: center;
+  }
+  .team-avatar {
+    width: 100%; aspect-ratio: 1;
+    background: linear-gradient(145deg, #c8d8c0, #a3bca0);
+    border-radius: 2px; margin-bottom: 1rem;
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem; color: rgba(255,255,255,0.4);
+  }
+  .team-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem; font-weight: 400; color: var(--charcoal);
+  }
+  .team-role {
+    font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--stone); margin-top: 0.25rem;
+  }
+
+  /* ─── BOOKING CTA ─── */
+  .booking-cta {
+    background: var(--charcoal);
+    text-align: center; padding: 7rem 5rem;
+    position: relative; overflow: hidden;
+  }
+  .booking-cta::before {
+    content: 'Health';
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18rem; font-weight: 300; color: rgba(255,255,255,0.025);
+    white-space: nowrap; pointer-events: none; user-select: none;
+  }
+
+  .booking-cta .section-eyebrow {
+    justify-content: center; color: var(--soft-gold);
+  }
+  .booking-cta .section-eyebrow::after { background: var(--soft-gold); }
+
+  .booking-cta .section-title { color: white; margin-bottom: 1.2rem; }
+  .booking-cta .section-title em { color: var(--soft-gold); }
+  .booking-cta p {
+    color: rgba(255,255,255,0.5); font-size: 1rem; font-weight: 300;
+    margin-bottom: 3rem; max-width: 50ch; margin-left: auto; margin-right: auto;
+  }
+
+  .booking-options {
+    display: flex; gap: 1.2rem; justify-content: center; align-items: center;
+    flex-wrap: wrap; position: relative; z-index: 2;
+  }
+
+  .btn-gold {
+    background: var(--soft-gold); color: var(--charcoal);
+    padding: 1rem 2.8rem; border: none; border-radius: 2px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer; text-decoration: none;
+    display: inline-block;
+    transition: background 0.25s, transform 0.2s;
+  }
+  .btn-gold:hover { background: #b89050; transform: translateY(-1px); }
+
+  /* ─── LOCATION ─── */
+  .location {
+    display: grid; grid-template-columns: 1fr 1fr;
+    background: var(--warm-white);
+  }
+
+  .location-info {
+    padding: 6rem 4rem 6rem 5rem;
+  }
+
+  .location-info .section-title { margin-bottom: 2rem; }
+
+  .location-detail {
+    display: flex; gap: 1.2rem; align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+  .loc-icon {
+    width: 2.4rem; height: 2.4rem; flex-shrink: 0;
+    background: var(--mist); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+  }
+  .loc-text { font-size: 0.95rem; line-height: 1.6; color: var(--stone); }
+  .loc-text strong { display: block; color: var(--charcoal); font-weight: 500; margin-bottom: 0.2rem; }
+
+  .location-map {
+    background: linear-gradient(145deg, var(--mist), #cdd8c5);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .map-placeholder {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-style: italic; color: var(--sage);
+    opacity: 0.6; text-align: center;
+  }
+  .map-pin {
+    font-size: 3rem; display: block; margin-bottom: 0.5rem;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #1E1E1C;
+    padding: 4rem 5rem 2rem;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .footer-top {
+    display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 3rem; margin-bottom: 4rem;
+  }
+
+  .footer-brand .nav-logo { color: white; font-size: 1.8rem; margin-bottom: 1rem; display: block; }
+  .footer-brand p { font-size: 0.85rem; line-height: 1.7; max-width: 30ch; }
+
+  .footer-col h4 {
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(255,255,255,0.6); margin-bottom: 1.2rem; font-weight: 500;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.6rem; }
+  .footer-col a {
+    font-size: 0.88rem; color: rgba(255,255,255,0.4);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .footer-col a:hover { color: rgba(255,255,255,0.8); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding-top: 2rem; display: flex;
+    justify-content: space-between; align-items: center;
+    font-size: 0.8rem;
+  }
+  .footer-bottom a { color: rgba(255,255,255,0.4); text-decoration: none; }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-left { padding: 8rem 1.8rem 3rem; }
+    .hero-right { display: none; }
+
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+
+    section { padding: 4rem 1.8rem; }
+
+    .about { grid-template-columns: 1fr; gap: 3rem; }
+    .about-visual { display: none; }
+
+    .services-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .services-grid { grid-template-columns: 1fr; }
+
+    .why { grid-template-columns: 1fr; gap: 3rem; }
+    .why-right { grid-template-columns: 1fr; }
+
+    .team-grid { grid-template-columns: repeat(2, 1fr); }
+    .team-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+
+    .location { grid-template-columns: 1fr; }
+    .location-info { padding: 4rem 1.8rem; }
+    .location-map { height: 250px; }
+
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    footer { padding: 3rem 1.8rem 2rem; }
+
+    .booking-cta { padding: 5rem 1.8rem; }
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow   { animation: fadeUp 0.7s ease both; }
+  .hero-title     { animation: fadeUp 0.7s 0.1s ease both; }
+  .hero-sub       { animation: fadeUp 0.7s 0.2s ease both; }
+  .hero-actions   { animation: fadeUp 0.7s 0.3s ease both; }
+  .hero-awards    { animation: fadeUp 0.7s 0.45s ease both; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Studio<span>Health</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#location">Location</a></li>
+    <li><a href="#" class="nav-cta">Book Now</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="padding:0">
+  <div class="hero-left">
+    <p class="hero-eyebrow">Vancouver, BC · Since 2003</p>
+    <h1 class="hero-title">
+      Holistic care,<br>
+      <em>tailored</em> to you.
+    </h1>
+    <p class="hero-sub">
+      A collaborative team of chiropractors, massage therapists, and acupuncturists—working together on your journey back to optimal health.
+    </p>
+    <div class="hero-actions">
+      <a href="https://studiohealth.janeapp.com/" class="btn-primary">Book an Appointment</a>
+      <a href="#services" class="btn-ghost">Explore Services</a>
+    </div>
+    <div class="hero-awards">
+      <div class="award-badge"><strong>#1</strong>Best Rated Chiro<br>in Vancouver</div>
+      <div class="award-badge"><strong>Top 2</strong>Chiropractor<br>in Vancouver</div>
+      <div class="award-badge"><strong>7</strong>Days<br>a Week</div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-image-bg"></div>
+    <div class="hero-decorative"></div>
+    <div class="hero-botanical">✦</div>
+    <div class="hero-card">
+      <p>"A personalized, holistic approach—because every patient's path to health is unique."</p>
+      <cite>— StudioHealth Philosophy</cite>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">20+</div>
+    <div class="stat-label">Years in Practice</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">3</div>
+    <div class="stat-label">Disciplines</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">7</div>
+    <div class="stat-label">Days a Week</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">2</div>
+    <div class="stat-label">Vancouver Locations</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-text">
+    <p class="section-eyebrow">Our Approach</p>
+    <h2 class="section-title">Care that goes<br><em>beyond the symptom</em></h2>
+    <p>At StudioHealth, persistent symptoms don't have to define your daily life. Our dedicated team takes a personalized, holistic approach—combining Chiropractic, Acupuncture, and Registered Massage Therapy under one roof.</p>
+    <p>Founded in 2003, our multi-disciplinary model means your practitioners collaborate, share insight, and work toward a single goal: your optimal health.</p>
+    <a href="https://studiohealth.ca/pages/about" class="btn-primary" style="margin-top:2.5rem; display:inline-block;">Learn About the Clinic</a>
+  </div>
+  <div class="about-visual">
+    <div class="about-img-placeholder">
+      <div class="about-img-inner">✦</div>
+    </div>
+    <div class="about-accent"></div>
+    <div class="about-accent2"></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="services-header">
+    <div>
+      <p class="section-eyebrow">What We Offer</p>
+      <h2 class="section-title">Our <em>Services</em></h2>
+    </div>
+    <a href="https://studiohealth.janeapp.com/" class="btn-primary">Book Any Service</a>
+  </div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">🦴</div>
+      <h3 class="service-name">Chiropractic</h3>
+      <p class="service-desc">Full-spine chiropractic care, custom orthotics, cold laser therapy, and ICBC claims. Addressing pain at its root.</p>
+      <a href="https://studiohealth.ca/services/chiropractic" class="service-link">Book →</a>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🤲</div>
+      <h3 class="service-name">Massage Therapy</h3>
+      <p class="service-desc">Registered Massage Therapy—from deep-tissue relief to prenatal care. Direct billing available.</p>
+      <a href="https://studiohealth.ca/services/massage-therapy" class="service-link">Book →</a>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🌿</div>
+      <h3 class="service-name">Acupuncture</h3>
+      <p class="service-desc">Traditional Chinese Medicine and acupuncture for pain, stress, and whole-body wellness.</p>
+      <a href="https://studiohealth.ca/services/acupuncture" class="service-link">Book →</a>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🎓</div>
+      <h3 class="service-name">Student Massage</h3>
+      <p class="service-desc">Affordable student massage treatments for those looking to experience the benefits of RMT at a lower rate.</p>
+      <a href="https://studiohealth.ca/services/student-massage-treatments-non-registered-massage-therapy" class="service-link">Book →</a>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🤰</div>
+      <h3 class="service-name">Pregnancy RMT</h3>
+      <p class="service-desc">Specialized massage therapy designed for expectant mothers—safe, soothing, and supportive throughout every trimester.</p>
+      <a href="https://studiohealth.janeapp.com/#/discipline/2/treatment/147" class="service-link">Book →</a>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🚗</div>
+      <h3 class="service-name">ICBC Claims</h3>
+      <p class="service-desc">Accepting ICBC claims for motor vehicle injury rehabilitation. Let us handle the paperwork while you recover.</p>
+      <a href="https://studiohealth.janeapp.com/#/staff_member/1/treatment/170" class="service-link">Book →</a>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="why">
+  <div class="why-left">
+    <p class="section-eyebrow">Why StudioHealth</p>
+    <h2 class="section-title">A clinic built<br>around <em>you</em></h2>
+  </div>
+  <div class="why-right">
+    <div class="why-card">
+      <div class="why-num">01</div>
+      <h4 class="why-title">Direct Billing</h4>
+      <p class="why-desc">We bill most extended health insurers directly, so you can focus on healing—not paperwork.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-num">02</div>
+      <h4 class="why-title">Multi-Disciplinary</h4>
+      <p class="why-desc">Chiropractors, RMTs, and acupuncturists collaborate on your care under one roof.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-num">03</div>
+      <h4 class="why-title">Open 7 Days</h4>
+      <p class="why-desc">Morning and evening appointments available every day of the week for your schedule.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-num">04</div>
+      <h4 class="why-title">New Patients Welcome</h4>
+      <p class="why-desc">We're always accepting new patients and pride ourselves on treating every client like family.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team" id="team">
+  <div class="team-header">
+    <div>
+      <p class="section-eyebrow">The People Behind Your Care</p>
+      <h2 class="section-title">Meet the <em>Team</em></h2>
+    </div>
+    <a href="https://studiohealth.ca/pages/team--18">View all practitioners →</a>
+  </div>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-avatar">🧑‍⚕️</div>
+      <div class="team-name">Dr. Omar</div>
+      <div class="team-role">Chiropractor & Founder</div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">🧑‍⚕️</div>
+      <div class="team-name">Leo</div>
+      <div class="team-role">Registered Massage Therapist</div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">🧑‍⚕️</div>
+      <div class="team-name">Roman</div>
+      <div class="team-role">Registered Massage Therapist</div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">🧑‍⚕️</div>
+      <div class="team-name">Rebecca</div>
+      <div class="team-role">Acupuncturist</div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING CTA -->
+<section class="booking-cta">
+  <div class="section-eyebrow" style="margin-bottom:1rem;">Ready to Feel Better?</div>
+  <h2 class="section-title" style="margin-bottom:1.2rem;">Start your journey to <em>optimal health</em></h2>
+  <p>Book online in minutes. Same-week appointments often available.</p>
+  <div class="booking-options">
+    <a href="https://studiohealth.janeapp.com/" class="btn-gold">Book an Appointment</a>
+    <a href="tel:+16048794500" class="btn-ghost" style="color:rgba(255,255,255,0.7); border-color:rgba(255,255,255,0.25);">Call 604-879-4500</a>
+  </div>
+</section>
+
+<!-- LOCATION -->
+<section class="location" style="padding:0" id="location">
+  <div class="location-info">
+    <p class="section-eyebrow">Find Us</p>
+    <h2 class="section-title">Visit <em>our clinic</em></h2>
+    <div style="margin-top:2.5rem;">
+      <div class="location-detail">
+        <div class="loc-icon">📍</div>
+        <div class="loc-text">
+          <strong>StudioHealth — Main Street</strong>
+          4196 Main St, Vancouver, BC V5V 3P7<br>
+          Mount Pleasant / Riley Park neighbourhood
+        </div>
+      </div>
+      <div class="location-detail">
+        <div class="loc-icon">📞</div>
+        <div class="loc-text">
+          <strong>Phone</strong>
+          <a href="tel:+16048794500" style="color:var(--stone); text-decoration:none;">604-879-4500</a>
+        </div>
+      </div>
+      <div class="location-detail">
+        <div class="loc-icon">✉️</div>
+        <div class="loc-text">
+          <strong>Email</strong>
+          <a href="mailto:contact@studiohealth.ca" style="color:var(--stone); text-decoration:none;">contact@studiohealth.ca</a>
+        </div>
+      </div>
+      <div class="location-detail">
+        <div class="loc-icon">🕐</div>
+        <div class="loc-text">
+          <strong>Hours</strong>
+          Open 7 days a week · Morning &amp; evening availability
+        </div>
+      </div>
+      <div class="location-detail">
+        <div class="loc-icon">💳</div>
+        <div class="loc-text">
+          <strong>Payment</strong>
+          Visa, Mastercard, Direct Payment, Cash · Gift certificates available
+        </div>
+      </div>
+    </div>
+    <a href="https://www.google.ca/maps?q=StudioHealth%2C+4196+Main+St%2C+Vancouver%2C+V5V+3P7%2C+BC" class="btn-primary" style="margin-top:2.5rem; display:inline-block;" target="_blank">Get Directions</a>
+  </div>
+  <div class="location-map">
+    <div class="map-placeholder">
+      <span class="map-pin">📍</span>
+      4196 Main St, Vancouver
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">Studio<span style="color:var(--sage-light)">Health</span></a>
+      <p>Vancouver's favourite multi-disciplinary health clinic. Chiropractic, Massage Therapy & Acupuncture since 2003.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="https://studiohealth.ca/services/chiropractic">Chiropractic</a></li>
+        <li><a href="https://studiohealth.ca/services/massage-therapy">Massage Therapy</a></li>
+        <li><a href="https://studiohealth.ca/services/acupuncture">Acupuncture</a></li>
+        <li><a href="https://studiohealth.ca/services/student-massage-treatments-non-registered-massage-therapy">Student Massage</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Clinic</h4>
+      <ul>
+        <li><a href="https://studiohealth.ca/pages/about">About</a></li>
+        <li><a href="https://studiohealth.ca/pages/team--18">Our Team</a></li>
+        <li><a href="https://studiohealth.ca/pages/faq">FAQ</a></li>
+        <li><a href="https://studiohealth.ca/pages/spotlight">Spotlight</a></li>
+        <li><a href="https://studiohealth.ca/pages/opportunities">Careers</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="tel:+16048794500">604-879-4500</a></li>
+        <li><a href="mailto:contact@studiohealth.ca">contact@studiohealth.ca</a></li>
+        <li><a href="https://studiohealth.janeapp.com/">Book Online</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 StudioHealth. All Rights Reserved.</span>
+    <a href="https://studiohealth.janeapp.com/">Book Now →</a>
+  </div>
+</footer>
+
+</body>
+</html>
