@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudioHealth — Find Your Best Care</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F7F3EE;
+    --warm-white: #FDFAF7;
+    --forest: #2A4A3E;
+    --sage: #5A8272;
+    --sage-light: #8BB5A6;
+    --gold: #C8A96E;
+    --gold-light: #E8D4AD;
+    --rust: #B85C38;
+    --charcoal: #2C2C2C;
+    --mid: #6B6B6B;
+    --light-border: #E0D8CE;
+    --shadow: 0 4px 32px rgba(42,74,62,0.10);
+    --shadow-lg: 0 12px 60px rgba(42,74,62,0.16);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle at 20% 20%, rgba(90,130,114,0.06) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 80%, rgba(200,169,110,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 40px 0 32px;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--forest);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--forest);
+    letter-spacing: -0.3px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 700;
+    color: var(--forest);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  header p {
+    color: var(--mid);
+    font-size: 16px;
+    font-weight: 300;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Progress */
+  .progress-bar {
+    background: var(--light-border);
+    border-radius: 999px;
+    height: 4px;
+    margin: 28px 0 8px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sage), var(--gold));
+    border-radius: 999px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--mid);
+    margin-bottom: 28px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--warm-white);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--light-border);
+    animation: slideUp 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .question-num {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 10px;
+  }
+
+  .question-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(20px, 3.5vw, 26px);
+    font-weight: 600;
+    color: var(--forest);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .question-sub {
+    font-size: 14px;
+    color: var(--mid);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* Options */
+  .options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .options.two-col {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .option-btn {
+    background: var(--cream);
+    border: 1.5px solid var(--light-border);
+    border-radius: 14px;
+    padding: 16px 20px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .option-btn:hover {
+    border-color: var(--sage-light);
+    background: #EFF5F2;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(90,130,114,0.12);
+  }
+
+  .option-btn.selected {
+    border-color: var(--forest);
+    background: rgba(42,74,62,0.05);
+  }
+
+  .option-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--light-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .option-btn.selected .option-icon {
+    background: var(--forest);
+  }
+
+  .option-label {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1.3;
+  }
+
+  .option-sub {
+    font-size: 12px;
+    color: var(--mid);
+    margin-top: 2px;
+    font-weight: 300;
+  }
+
+  /* Slider */
+  .slider-wrap {
+    margin: 8px 0 4px;
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--mid);
+    margin-bottom: 10px;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--sage) var(--pct, 50%), var(--light-border) var(--pct, 50%));
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--forest);
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(42,74,62,0.3);
+    cursor: pointer;
+  }
+
+  .slider-value {
+    text-align: center;
+    margin-top: 12px;
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--forest);
+  }
+
+  .slider-value span {
+    font-size: 14px;
+    color: var(--mid);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+  }
+
+  /* Body map */
+  .body-map {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .body-tag {
+    background: var(--cream);
+    border: 1.5px solid var(--light-border);
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--charcoal);
+  }
+
+  .body-tag:hover {
+    border-color: var(--sage-light);
+    background: #EFF5F2;
+  }
+
+  .body-tag.selected {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: white;
+  }
+
+  /* Navigation */
+  .nav-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .btn-back {
+    background: none;
+    border: 1.5px solid var(--light-border);
+    border-radius: 12px;
+    padding: 14px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mid);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-back:hover {
+    border-color: var(--sage-light);
+    color: var(--forest);
+  }
+
+  .btn-next {
+    flex: 1;
+    background: var(--forest);
+    border: none;
+    border-radius: 12px;
+    padding: 14px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.2px;
+  }
+
+  .btn-next:hover {
+    background: var(--sage);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(42,74,62,0.25);
+  }
+
+  .btn-next:disabled {
+    opacity: 0.4;
+    cursor: default;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Results */
+  .results-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .results-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--forest);
+    margin-bottom: 8px;
+  }
+
+  .results-header p {
+    color: var(--mid);
+    font-size: 15px;
+  }
+
+  .recommendation-card {
+    background: var(--warm-white);
+    border-radius: 20px;
+    border: 1px solid var(--light-border);
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    animation: slideUp 0.4s cubic-bezier(0.4,0,0.2,1) both;
+  }
+
+  .recommendation-card:nth-child(1) { animation-delay: 0.05s; }
+  .recommendation-card:nth-child(2) { animation-delay: 0.10s; }
+  .recommendation-card:nth-child(3) { animation-delay: 0.15s; }
+  .recommendation-card:nth-child(4) { animation-delay: 0.20s; }
+
+  .rec-header {
+    display: flex;
+    align-items: center;
+    padding: 20px 24px;
+    gap: 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .rec-rank {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .rec-info { flex: 1; }
+
+  .rec-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--forest);
+    margin-bottom: 3px;
+  }
+
+  .rec-tag {
+    font-size: 12px;
+    color: var(--mid);
+    font-weight: 400;
+  }
+
+  .rec-pct-wrap { text-align: right; flex-shrink: 0; }
+
+  .rec-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .rec-pct-label {
+    font-size: 11px;
+    color: var(--mid);
+    margin-top: 2px;
+  }
+
+  .rec-bar {
+    height: 4px;
+    background: var(--light-border);
+    margin: 0 24px;
+  }
+
+  .rec-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 1s cubic-bezier(0.4,0,0.2,1) 0.3s;
+  }
+
+  .rec-body {
+    padding: 0 24px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.3s;
+  }
+
+  .rec-body.open {
+    max-height: 600px;
+    padding: 16px 24px 24px;
+  }
+
+  .rec-body-inner {
+    border-top: 1px solid var(--light-border);
+    padding-top: 16px;
+  }
+
+  .rec-detail-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .detail-chip {
+    background: var(--cream);
+    border: 1px solid var(--light-border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--charcoal);
+  }
+
+  .rec-rationale {
+    font-size: 14px;
+    color: var(--mid);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .modalities-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--sage);
+    margin-bottom: 8px;
+  }
+
+  .modality-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .modality-chip {
+    background: rgba(42,74,62,0.07);
+    border-radius: 8px;
+    padding: 5px 11px;
+    font-size: 12px;
+    color: var(--forest);
+    font-weight: 500;
+  }
+
+  /* Cost + visits */
+  .rec-meta {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .meta-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--mid);
+    font-weight: 600;
+  }
+
+  .meta-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--charcoal);
+  }
+
+  /* Alert */
+  .alert-box {
+    background: #FEF3EB;
+    border: 1.5px solid #E8C49B;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    animation: slideUp 0.4s ease;
+  }
+
+  .alert-icon { font-size: 20px; flex-shrink: 0; }
+
+  .alert-text { font-size: 14px; line-height: 1.5; color: #7A4A1E; }
+
+  .alert-text strong { font-weight: 600; }
+
+  /* Combo tip */
+  .combo-card {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--sage) 100%);
+    border-radius: 20px;
+    padding: 24px;
+    color: white;
+    margin-bottom: 16px;
+    animation: slideUp 0.4s 0.3s both;
+  }
+
+  .combo-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: var(--gold-light);
+  }
+
+  .combo-card p {
+    font-size: 14px;
+    opacity: 0.88;
+    line-height: 1.6;
+  }
+
+  /* Restart */
+  .btn-restart {
+    width: 100%;
+    background: none;
+    border: 1.5px solid var(--light-border);
+    border-radius: 12px;
+    padding: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--mid);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+
+  .btn-restart:hover {
+    border-color: var(--sage-light);
+    color: var(--forest);
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    text-align: center;
+    font-size: 12px;
+    color: #AAA;
+    margin-top: 32px;
+    line-height: 1.6;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 24px 20px; }
+    .options.two-col { grid-template-columns: 1fr; }
+    .rec-header { padding: 16px 18px; gap: 12px; }
+    .rec-name { font-size: 17px; }
+    .rec-pct { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">✦</div>
+      <div class="logo-text">StudioHealth</div>
+    </div>
+    <h1>Find Your Best Care</h1>
+    <p>Answer a few questions and we'll recommend which treatments are most likely to help — and why.</p>
+  </header>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+  </div>
+  <div class="progress-label">
+    <span id="progressStep">Getting started</span>
+    <span id="progressPct">0%</span>
+  </div>
+
+  <div id="questionArea"></div>
+  <div id="resultsArea" style="display:none"></div>
+
+  <p class="disclaimer">This tool is for guidance only and does not replace a clinical assessment. Always consult a qualified healthcare provider. ©StudioHealth.ca</p>
+</div>
+
+<script>
+const questions = [
+  {
+    id: 'location',
+    type: 'tags',
+    label: 'Where is your pain or discomfort?',
+    sub: 'Select all that apply.',
+    tags: ['Neck','Upper back','Lower back','Shoulder','Elbow','Wrist / Hand','Hip','Knee','Ankle / Foot','Jaw (TMJ)','Headache','Other']
+  },
+  {
+    id: 'onset',
+    type: 'options',
+    label: 'Is this a new problem or returning issue?',
+    sub: 'This helps us understand how your tissues are responding.',
+    options: [
+      { value: 'new_acute', icon: '⚡', label: 'Brand new', sub: 'Started within the last 2 weeks' },
+      { value: 'new_sub', icon: '📅', label: 'Recent but recurring', sub: '2 weeks to 3 months, or flare-up of old issue' },
+      { value: 'chronic', icon: '🔁', label: 'Ongoing / chronic', sub: 'More than 3 months, or never fully resolved' },
+      { value: 'old_injury', icon: '🏥', label: 'Old injury, now flaring', sub: 'Had a previous diagnosis or injury' }
+    ]
+  },
+  {
+    id: 'cause',
+    type: 'options',
+    label: 'What seems to have caused it?',
+    options: [
+      { value: 'trauma', icon: '💥', label: 'Sudden event', sub: 'Fall, accident, sports injury, collision' },
+      { value: 'overuse', icon: '🔧', label: 'Overuse / repetitive', sub: 'Buildup from work, sport, or activity' },
+      { value: 'posture', icon: '🪑', label: 'Posture / ergonomic', sub: 'Desk work, poor sleep position, prolonged sitting' },
+      { value: 'unknown', icon: '❓', label: 'No clear reason', sub: 'Woke up with it or gradual onset' }
+    ]
+  },
+  {
+    id: 'pain_type',
+    type: 'options',
+    label: 'How would you describe the pain?',
+    options: [
+      { value: 'sharp', icon: '🔪', label: 'Sharp / stabbing', sub: 'Comes and goes, often with movement' },
+      { value: 'ache', icon: '🌊', label: 'Deep ache / constant', sub: 'Dull, persistent, heavy feeling' },
+      { value: 'burning', icon: '🔥', label: 'Burning / electric', sub: 'Shooting, radiating, tingling or numbness' },
+      { value: 'stiff', icon: '🧱', label: 'Stiffness / tightness', sub: 'Limited range, worse in morning or after rest' }
+    ]
+  },
+  {
+    id: 'severity',
+    type: 'slider',
+    label: 'Rate your pain right now',
+    sub: 'On a scale of 0 (no pain) to 10 (worst imaginable).',
+    min: 0, max: 10, default: 5,
+    lowLabel: '0 — No pain', highLabel: '10 — Worst imaginable'
+  },
+  {
+    id: 'function',
+    type: 'options',
+    label: 'How much is it affecting your daily life?',
+    options: [
+      { value: 'minimal', icon: '🟢', label: 'Minimal', sub: 'Noticeable but I\'m doing everything I normally do' },
+      { value: 'moderate', icon: '🟡', label: 'Moderate', sub: 'Avoiding some activities, less productive' },
+      { value: 'significant', icon: '🟠', label: 'Significant', sub: 'Struggling with work, sleep or daily tasks' },
+      { value: 'severe', icon: '🔴', label: 'Severe', sub: 'Barely managing, may need urgent care' }
+    ]
+  },
+  {
+    id: 'tried',
+    type: 'tags',
+    label: 'Have you tried any of these before for this issue?',
+    sub: 'Select anything you\'ve already tried.',
+    tags: ['Chiropractic','Massage (RMT)','Physiotherapy','Acupuncture','IMS','Shockwave / Softwave','Medication / Anti-inflam','Rest / Ice / Heat','Nothing yet','Other']
+  },
+  {
+    id: 'priority',
+    type: 'options',
+    label: 'What matters most to you right now?',
+    sub: 'Be honest — this shapes our recommendation.',
+    options: [
+      { value: 'fast_relief', icon: '⚡', label: 'Fast pain relief', sub: 'I need to feel better as quickly as possible' },
+      { value: 'root_cause', icon: '🔍', label: 'Fix the root cause', sub: 'I want to understand why this is happening' },
+      { value: 'prevention', icon: '🛡️', label: 'Long-term prevention', sub: 'Stop this from coming back' },
+      { value: 'value', icon: '💰', label: 'Best value / covered', sub: 'Cost and insurance coverage matter' }
+    ]
+  }
+];
+
+let answers = {};
+let currentQ = 0;
+let openRec = null;
+
+function updateProgress() {
+  const pct = Math.round((currentQ / questions.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressStep').textContent =
+    currentQ === 0 ? 'Getting started' :
+    currentQ >= questions.length ? 'Complete' :
+    `Question ${currentQ} of ${questions.length}`;
+}
+
+function renderQuestion() {
+  updateProgress();
+  const q = questions[currentQ];
+  const area = document.getElementById('questionArea');
+  const val = answers[q.id];
+
+  let inner = '';
+
+  if (q.type === 'options') {
+    inner = `<div class="options">${q.options.map(o => `
+      <button class="option-btn ${val === o.value ? 'selected' : ''}" onclick="selectOption('${q.id}','${o.value}')">
+        <div class="option-icon">${o.icon}</div>
+        <div>
+          <div class="option-label">${o.label}</div>
+          ${o.sub ? `<div class="option-sub">${o.sub}</div>` : ''}
+        </div>
+      </button>`).join('')}</div>`;
+  } else if (q.type === 'slider') {
+    const cur = val !== undefined ? val : q.default;
+    const pct = ((cur - q.min) / (q.max - q.min)) * 100;
+    inner = `
+      <div class="slider-wrap">
+        <div class="slider-labels"><span>${q.lowLabel}</span><span>${q.highLabel}</span></div>
+        <input type="range" min="${q.min}" max="${q.max}" value="${cur}" id="severitySlider"
+          style="--pct:${pct}%"
+          oninput="updateSlider(this)">
+        <div class="slider-value" id="sliderVal">${cur}<span> / 10</span></div>
+      </div>`;
+  } else if (q.type === 'tags') {
+    const sel = val || [];
+    inner = `<div class="body-map">${q.tags.map(t => `
+      <button class="body-tag ${sel.includes(t) ? 'selected' : ''}" onclick="toggleTag('${q.id}','${t}',this)">${t}</button>`).join('')}</div>`;
+  }
+
+  area.innerHTML = `
+    <div class="card">
+      <div class="question-num">Question ${currentQ + 1} of ${questions.length}</div>
+      <div class="question-text">${q.label}</div>
+      ${q.sub ? `<div class="question-sub">${q.sub}</div>` : ''}
+      ${inner}
+      <div class="nav-row">
+        ${currentQ > 0 ? `<button class="btn-back" onclick="goBack()">← Back</button>` : ''}
+        <button class="btn-next" id="nextBtn" onclick="goNext()" ${canProceed() ? '' : 'disabled'}>
+          ${currentQ === questions.length - 1 ? 'See My Recommendations →' : 'Continue →'}
+        </button>
+      </div>
+    </div>`;
+}
+
+function canProceed() {
+  const q = questions[currentQ];
+  if (q.type === 'slider') return true;
+  if (q.type === 'tags') return (answers[q.id] || []).length > 0;
+  return answers[q.id] !== undefined;
+}
+
+function checkNext() {
+  const nb = document.getElementById('nextBtn');
+  if (nb) nb.disabled = !canProceed();
+}
+
+function selectOption(id, value) {
+  answers[id] = value;
+  renderQuestion();
+  // Auto-advance after short delay
+  setTimeout(goNext, 300);
+}
+
+function toggleTag(id, tag) {
+  let sel = answers[id] || [];
+  if (sel.includes(tag)) sel = sel.filter(t => t !== tag);
+  else sel = [...sel, tag];
+  answers[id] = sel;
+  document.querySelectorAll('.body-tag').forEach(btn => {
+    btn.classList.toggle('selected', sel.includes(btn.textContent));
+  });
+  checkNext();
+}
+
+function updateSlider(el) {
+  const v = parseInt(el.value);
+  const pct = ((v - parseInt(el.min)) / (parseInt(el.max) - parseInt(el.min))) * 100;
+  el.style.setProperty('--pct', pct + '%');
+  document.getElementById('sliderVal').innerHTML = v + '<span> / 10</span>';
+  answers[questions[currentQ].id] = v;
+}
+
+function goBack() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); }
+}
+
+function goNext() {
+  const q = questions[currentQ];
+  if (q.type === 'slider' && answers[q.id] === undefined) answers[q.id] = q.default;
+  if (!canProceed()) return;
+  currentQ++;
+  if (currentQ >= questions.length) showResults();
+  else renderQuestion();
+}
+
+// ── Recommendation engine ──────────────────────────────────────────────────
+
+function computeRecommendations() {
+  const a = answers;
+  const onset = a.onset || 'new_acute';
+  const cause = a.cause || 'unknown';
+  const painType = a.pain_type || 'ache';
+  const severity = a.severity !== undefined ? a.severity : 5;
+  const fn = a.function || 'moderate';
+  const priority = a.priority || 'fast_relief';
+  const tried = a.tried || [];
+  const locations = a.location || [];
+
+  // Base scores
+  let scores = { chiro: 35, rmt: 30, physio: 30, acu: 20, urgent: 0 };
+
+  // Onset modifiers
+  if (onset === 'new_acute') { scores.rmt += 15; scores.chiro += 5; scores.physio += 5; }
+  if (onset === 'chronic') { scores.chiro += 15; scores.physio += 10; scores.acu += 15; }
+  if (onset === 'old_injury') { scores.chiro += 10; scores.physio += 15; }
+
+  // Cause
+  if (cause === 'trauma') { scores.physio += 10; scores.chiro += 5; if (severity >= 7) scores.urgent += 20; }
+  if (cause === 'overuse') { scores.rmt += 15; scores.physio += 10; scores.acu += 5; }
+  if (cause === 'posture') { scores.chiro += 20; scores.physio += 10; }
+  if (cause === 'unknown') { scores.chiro += 10; scores.rmt += 10; }
+
+  // Pain type
+  if (painType === 'burning') { scores.acu += 20; scores.physio += 10; if (severity >= 6) scores.urgent += 15; }
+  if (painType === 'sharp') { scores.chiro += 10; scores.physio += 5; }
+  if (painType === 'ache') { scores.rmt += 15; scores.acu += 10; }
+  if (painType === 'stiff') { scores.chiro += 20; scores.rmt += 10; }
+
+  // Severity
+  if (severity >= 8) { scores.urgent += 15; }
+  if (severity >= 6) { scores.chiro += 5; scores.physio += 5; }
+  if (severity <= 3) { scores.rmt += 10; scores.acu += 10; }
+
+  // Function
+  if (fn === 'severe') { scores.urgent += 20; scores.physio += 10; }
+  if (fn === 'significant') { scores.physio += 10; scores.chiro += 5; }
+  if (fn === 'minimal') { scores.rmt += 10; scores.acu += 5; }
+
+  // Location modifiers
+  if (locations.includes('Headache') || locations.includes('Jaw (TMJ)')) { scores.chiro += 10; scores.acu += 10; }
+  if (locations.includes('Lower back')) { scores.chiro += 15; scores.physio += 5; }
+  if (locations.includes('Shoulder')) { scores.physio += 15; scores.rmt += 5; }
+  if (locations.includes('Neck')) { scores.chiro += 15; scores.rmt += 10; }
+  if (locations.some(l => ['Wrist / Hand','Elbow'].includes(l))) { scores.physio += 15; scores.rmt += 10; }
+
+  // Priority
+  if (priority === 'fast_relief') { scores.rmt += 5; scores.acu += 5; }
+  if (priority === 'root_cause') { scores.chiro += 10; scores.physio += 10; }
+  if (priority === 'prevention') { scores.chiro += 20; }
+  if (priority === 'value') { scores.rmt += 5; scores.acu += 5; }
+
+  // Normalize to percentages
+  const total = Object.values(scores).filter(k => k > 0).reduce((a, b) => a + b, 0);
+  const ignore = ['urgent'];
+  const relevant = ['chiro','rmt','physio','acu'];
+  const relTotal = relevant.reduce((s, k) => s + scores[k], 0);
+
+  const normalized = {};
+  relevant.forEach(k => normalized[k] = Math.round((scores[k] / relTotal) * 100));
+
+  return { normalized, urgentFlag: scores.urgent >= 25, raw: scores };
+}
+
+const recDetails = {
+  chiro: {
+    name: 'Chiropractic Care',
+    icon: '🦴',
+    color: '#2A4A3E',
+    tag: 'Joint & Nerve Function',
+    rationale: (a) => {
+      const bits = [];
+      if ((a.cause === 'posture') || (a.location||[]).includes('Lower back') || (a.location||[]).includes('Neck'))
+        bits.push('Your symptoms strongly suggest a mechanical joint component — chiropractic adjustments are highly effective here.');
+      if (a.onset === 'chronic' || a.priority === 'prevention')
+        bits.push('For long-term prevention and reducing re-exacerbation, regular chiropractic care is well-supported by evidence.');
+      if (a.pain_type === 'stiff')
+        bits.push('Stiffness and restricted range of motion respond especially well to spinal manipulation.');
+      return bits.join(' ') || 'Based on your symptom profile, chiropractic care addresses the structural and neurological contributors to your pain.';
+    },
+    modalities: ['Diversified adjustment','Activator method','Cox flexion-distraction','Soft tissue (Graston/ART)','Therapeutic ultrasound','Shockwave / Softwave','Exercise prescription'],
+    visits: '3–6 initial, then reassess',
+    cost: '$60–$100/visit (often covered)',
+    highlight: (a) => a.priority === 'prevention' || a.onset === 'chronic'
+  },
+  rmt: {
+    name: 'Registered Massage Therapy',
+    icon: '🤲',
+    color: '#5A8272',
+    tag: 'Muscle & Soft Tissue',
+    rationale: (a) => {
+      const bits = [];
+      if (a.cause === 'overuse') bits.push('Repetitive strain and overuse patterns respond very well to targeted myofascial release.');
+      if ((a.severity||5) <= 5) bits.push('At your pain level, hands-on massage can provide immediate relief with low risk.');
+      if (a.pain_type === 'ache') bits.push('Deep aching pain is often muscular in origin — RMT directly addresses this.');
+      return bits.join(' ') || 'RMT is excellent for reducing muscle tension, improving circulation, and calming the nervous system around your injury.';
+    },
+    modalities: ['Deep tissue massage','Myofascial release','Trigger point therapy','Lymphatic drainage','Hot stone','Cupping'],
+    visits: '1–4 for acute, ongoing for chronic',
+    cost: '$90–$130/visit (often covered)',
+    highlight: (a) => a.cause === 'overuse' || a.pain_type === 'ache'
+  },
+  physio: {
+    name: 'Physiotherapy',
+    icon: '🏃',
+    color: '#C8A96E',
+    tag: 'Rehabilitation & Strength',
+    rationale: (a) => {
+      const bits = [];
+      if (a.cause === 'trauma') bits.push('Post-trauma rehabilitation — restoring function, strength, and neuromuscular control — is physiotherapy\'s core strength.');
+      if ((a.location||[]).includes('Shoulder')) bits.push('Shoulder injuries have complex mechanics; physio\'s exercise-based approach is gold standard here.');
+      if (a.function === 'severe' || a.function === 'significant') bits.push('When daily function is significantly impaired, structured rehabilitation is essential for full recovery.');
+      return bits.join(' ') || 'Physiotherapy combines hands-on treatment with progressive exercise to rebuild the strength and movement patterns that protect your joints.';
+    },
+    modalities: ['Manual therapy','IMS (dry needling)','Therapeutic exercise','Shockwave','Ultrasound','Taping / bracing','Return-to-sport programs'],
+    visits: '4–8 typical course',
+    cost: '$80–$120/visit (often covered)',
+    highlight: (a) => a.cause === 'trauma' || a.function === 'severe'
+  },
+  acu: {
+    name: 'Acupuncture / TCM',
+    icon: '🪡',
+    color: '#B85C38',
+    tag: 'Pain Modulation & Systemic',
+    rationale: (a) => {
+      const bits = [];
+      if (a.pain_type === 'burning') bits.push('Burning or radiating pain — often neuropathic — responds particularly well to acupuncture\'s pain-modulating effects.');
+      if (a.onset === 'chronic') bits.push('Chronic pain involves central sensitization; acupuncture is one of few therapies with good evidence for this mechanism.');
+      if ((a.severity||5) <= 4) bits.push('At lower pain levels, acupuncture\'s regulating effects can break chronic tension-pain cycles effectively.');
+      return bits.join(' ') || 'Acupuncture works through neural, circulatory, and systemic pathways — especially effective when other approaches haven\'t fully resolved symptoms.';
+    },
+    modalities: ['Traditional acupuncture needles','IMS / dry needling','Electroacupuncture','Cupping','Moxibustion'],
+    visits: '4–8 for assessment of response',
+    cost: '$80–$120/visit (partial coverage)',
+    highlight: (a) => a.pain_type === 'burning' || a.onset === 'chronic'
+  }
+};
+
+function showResults() {
+  document.getElementById('questionArea').style.display = 'none';
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('progressPct').textContent = '100%';
+  document.getElementById('progressStep').textContent = 'Complete';
+
+  const { normalized, urgentFlag } = computeRecommendations();
+  const sorted = Object.entries(normalized).sort((a, b) => b[1] - a[1]);
+
+  const colors = ['#2A4A3E','#5A8272','#C8A96E','#B85C38'];
+  const bgColors = ['rgba(42,74,62,0.08)','rgba(90,130,114,0.08)','rgba(200,169,110,0.12)','rgba(184,92,56,0.08)'];
+
+  const a = answers;
+  const isChronicOrPrev = a.onset === 'chronic' || a.priority === 'prevention';
+  const topTwo = sorted.slice(0, 2).map(([k]) => recDetails[k].name);
+
+  const urgentHtml = urgentFlag ? `
+    <div class="alert-box">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-text"><strong>Consider seeing your family doctor or a walk-in clinic first.</strong> Your symptoms — especially the severity or nature of your pain — may benefit from a clinical examination or imaging before starting hands-on therapy. This is a precaution, not a cause for alarm.</div>
+    </div>` : '';
+
+  const comboHtml = isChronicOrPrev ? `
+    <div class="combo-card">
+      <h3>💡 Combination Care Advantage</h3>
+      <p>For your situation, research and clinical experience show that combining two modalities — particularly <strong>${topTwo.join(' + ')}</strong> — leads to longer-lasting results and lower rates of re-injury. Addressing both the <em>structural</em> and <em>soft tissue</em> components is especially important when preventing recurrence matters to you.</p>
+    </div>` : '';
+
+  const recsHtml = sorted.map(([key, pct], i) => {
+    const rec = recDetails[key];
+    const det = rec;
+    const rationale = det.rationale(a);
+    const highlighted = det.highlight(a);
+    return `
+    <div class="recommendation-card">
+      <div class="rec-header" onclick="toggleRec('rec-${i}')">
+        <div class="rec-rank" style="background:${bgColors[i]}">${det.icon}</div>
+        <div class="rec-info">
+          <div class="rec-name">${det.name}</div>
+          <div class="rec-tag">${det.tag}${highlighted ? ' · <strong style="color:'+colors[i]+'">Top match for you</strong>' : ''}</div>
+        </div>
+        <div class="rec-pct-wrap">
+          <div class="rec-pct" style="color:${colors[i]}">${pct}%</div>
+          <div class="rec-pct-label">likelihood</div>
+        </div>
+      </div>
+      <div class="rec-bar"><div class="rec-bar-fill" style="width:0%;background:${colors[i]}" data-pct="${pct}" id="bar-${i}"></div></div>
+      <div class="rec-body" id="rec-${i}">
+        <div class="rec-body-inner">
+          <p class="rec-rationale">${rationale}</p>
+          <div class="modalities-label">Common Modalities</div>
+          <div class="modality-list">${det.modalities.map(m => `<span class="modality-chip">${m}</span>`).join('')}</div>
+          <div class="rec-meta">
+            <div class="meta-item"><div class="meta-label">Typical Course</div><div class="meta-value">${det.visits}</div></div>
+            <div class="meta-item"><div class="meta-label">Cost Range</div><div class="meta-value">${det.cost}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const resultsArea = document.getElementById('resultsArea');
+  resultsArea.style.display = 'block';
+  resultsArea.innerHTML = `
+    <div class="results-header">
+      <h2>Your Personalized Recommendations</h2>
+      <p>Based on your answers, here's where treatment is most likely to get you above 50% improvement within the first 3 sessions.</p>
+    </div>
+    ${urgentHtml}
+    ${recsHtml}
+    ${comboHtml}
+    <button class="btn-restart" onclick="restart()">↩ Start Over</button>
+  `;
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.rec-bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.pct + '%';
+    });
+  }, 200);
+
+  // Auto-open top result
+  setTimeout(() => toggleRec('rec-0'), 600);
+}
+
+function toggleRec(id) {
+  const el = document.getElementById(id);
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.rec-body').forEach(b => b.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+
+function restart() {
+  answers = {};
+  currentQ = 0;
+  openRec = null;
+  document.getElementById('resultsArea').style.display = 'none';
+  document.getElementById('questionArea').style.display = 'block';
+  renderQuestion();
+}
+
+// Init
+renderQuestion();
+</script>
+</body>
+</html>
