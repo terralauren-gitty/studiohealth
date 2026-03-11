@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Your Treatment | StudioHealth Vancouver</title>
+  <meta name="description" content="Answer 6 quick questions to find out which StudioHealth treatments — chiropractic, RMT, acupuncture, or SoftWave — are most likely to help your specific condition.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --forest: #1a2e1e;
+      --sage: #4a7c59;
+      --mint: #a8c5a0;
+      --cream: #f5f0e8;
+      --warm-white: #faf8f4;
+      --charcoal: #2c2c2c;
+      --stone: #8a8578;
+      --gold: #c9a84c;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--forest);
+      color: var(--charcoal);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── BG TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 15% 20%, rgba(74,124,89,0.25) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 75%, rgba(201,168,76,0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV BAR ── */
+    .quiz-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 64px;
+      background: rgba(26,46,30,0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(168,197,160,0.12);
+    }
+    .quiz-nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: white;
+      text-decoration: none;
+    }
+    .quiz-nav-logo span { color: var(--mint); }
+    .quiz-nav-back {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .quiz-nav-back:hover { color: var(--mint); }
+
+    /* ── MAIN WRAPPER ── */
+    .quiz-shell {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 1.5rem 4rem;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-track {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255,255,255,0.08);
+      z-index: 49;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--mint), var(--gold));
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ── STEP COUNTER ── */
+    .step-counter {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mint);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    /* ── CARD ── */
+    .quiz-card {
+      background: rgba(250,248,244,0.97);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 680px;
+      padding: 3rem 3.5rem;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.05);
+      animation: cardIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(28px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .card-exit {
+      animation: cardOut 0.25s ease forwards;
+    }
+    @keyframes cardOut {
+      to { opacity: 0; transform: translateY(-16px) scale(0.98); }
+    }
+
+    /* ── QUESTION ── */
+    .q-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 0.6rem;
+    }
+    .q-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.7rem, 3vw, 2.3rem);
+      font-weight: 400;
+      color: var(--forest);
+      line-height: 1.25;
+      margin-bottom: 0.6rem;
+    }
+    .q-sub {
+      font-size: 0.83rem;
+      color: var(--stone);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    /* ── OPTIONS ── */
+    .options {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .options.two-col { grid-template-columns: 1fr 1fr; }
+
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.3rem;
+      background: var(--warm-white);
+      border: 2px solid rgba(74,124,89,0.12);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      user-select: none;
+    }
+    .opt:hover {
+      border-color: var(--sage);
+      background: rgba(74,124,89,0.04);
+      transform: translateX(3px);
+    }
+    .opt.selected {
+      border-color: var(--sage);
+      background: rgba(74,124,89,0.08);
+    }
+    .opt-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      width: 36px;
+      text-align: center;
+    }
+    .opt-text { flex: 1; }
+    .opt-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--forest);
+      display: block;
+    }
+    .opt-hint {
+      font-size: 0.75rem;
+      color: var(--stone);
+      display: block;
+      margin-top: 0.15rem;
+      line-height: 1.4;
+    }
+    .opt-check {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(74,124,89,0.25);
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .opt.selected .opt-check {
+      background: var(--sage);
+      border-color: var(--sage);
+    }
+    .opt.selected .opt-check::after {
+      content: '✓';
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+
+    /* multi-select helper */
+    .q-multi-hint {
+      font-size: 0.72rem;
+      color: var(--stone);
+      font-style: italic;
+      margin-bottom: 1rem;
+    }
+
+    /* ── NAVIGATION BUTTONS ── */
+    .quiz-nav-btns {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      gap: 1rem;
+    }
+    .btn-back {
+      background: none;
+      border: 2px solid rgba(74,124,89,0.2);
+      color: var(--stone);
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-back:hover { border-color: var(--sage); color: var(--sage); }
+    .btn-back:disabled { opacity: 0.3; cursor: default; }
+
+    .btn-next {
+      background: var(--forest);
+      color: white;
+      border: none;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-next:hover { background: var(--sage); }
+    .btn-next:disabled { opacity: 0.35; cursor: default; }
+    .btn-next .arrow { transition: transform 0.2s; }
+    .btn-next:not(:disabled):hover .arrow { transform: translateX(4px); }
+
+    /* ── RESULTS ── */
+    .results-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .results-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(74,124,89,0.1);
+      border: 1px solid rgba(74,124,89,0.25);
+      border-radius: 100px;
+      padding: 0.35rem 1rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--sage);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .results-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: var(--forest);
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    .results-title em { font-style: italic; color: var(--sage); }
+    .results-sub { font-size: 0.85rem; color: var(--stone); line-height: 1.65; }
+
+    .recs { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+
+    .rec-card {
+      border-radius: 14px;
+      border: 2px solid transparent;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .rec-card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(26,46,30,0.1); }
+
+    .rec-card.primary {
+      border-color: var(--sage);
+      background: white;
+    }
+    .rec-card.secondary {
+      border-color: rgba(74,124,89,0.2);
+      background: var(--warm-white);
+    }
+
+    .rec-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.2rem 1.5rem 0.8rem;
+    }
+    .rec-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .rec-meta { flex: 1; }
+    .rec-rank {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 0.15rem;
+    }
+    .rec-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--forest);
+    }
+
+    .match-bar-wrap {
+      padding: 0 1.5rem 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .match-bar-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(74,124,89,0.12);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .match-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--sage), var(--mint));
+      border-radius: 100px;
+      transition: width 1s cubic-bezier(0.4,0,0.2,1) 0.3s;
+    }
+    .match-pct {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--sage);
+      white-space: nowrap;
+    }
+
+    .rec-why {
+      padding: 0 1.5rem 0.8rem;
+      font-size: 0.83rem;
+      color: var(--stone);
+      line-height: 1.7;
+    }
+    .rec-why strong { color: var(--forest); }
+
+    .rec-conditions {
+      padding: 0.6rem 1.5rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      border-top: 1px solid rgba(74,124,89,0.1);
+    }
+    .cond-tag {
+      background: rgba(74,124,89,0.07);
+      color: var(--sage);
+      border-radius: 100px;
+      padding: 0.2rem 0.65rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    /* CTA section */
+    .results-cta {
+      background: var(--forest);
+      border-radius: 14px;
+      padding: 2rem;
+      text-align: center;
+      color: white;
+    }
+    .results-cta p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 1.2rem;
+      line-height: 1.6;
+    }
+    .cta-btns { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .btn-book {
+      background: var(--sage);
+      color: white;
+      padding: 0.8rem 1.8rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: background 0.2s;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-book:hover { background: #3d6b4f; }
+    .btn-retake {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7);
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-retake:hover { background: rgba(255,255,255,0.14); color: white; }
+
+    /* disclaimer */
+    .disclaimer {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.35);
+      margin-top: 1rem;
+      line-height: 1.6;
+    }
+
+    /* ── INTRO SCREEN ── */
+    .intro-card {
+      text-align: center;
+      max-width: 600px;
+    }
+    .intro-icon { font-size: 3.5rem; margin-bottom: 1.5rem; }
+    .intro-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 300;
+      color: var(--forest);
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .intro-title em { font-style: italic; color: var(--sage); }
+    .intro-body {
+      font-size: 0.9rem;
+      color: var(--stone);
+      line-height: 1.75;
+      margin-bottom: 2rem;
+    }
+    .intro-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+    }
+    .intro-pill {
+      background: rgba(74,124,89,0.08);
+      border: 1px solid rgba(74,124,89,0.2);
+      border-radius: 100px;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--sage);
+      letter-spacing: 0.04em;
+    }
+    .btn-start {
+      background: var(--forest);
+      color: white;
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-family: 'DM Sans', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-start:hover { background: var(--sage); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,46,30,0.25); }
+    .intro-meta { font-size: 0.72rem; color: var(--stone); margin-top: 0.8rem; }
+
+    @media (max-width: 640px) {
+      .quiz-card { padding: 2rem 1.5rem; }
+      .options.two-col { grid-template-columns: 1fr; }
+      .cta-btns { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="quiz-nav">
+  <a href="index.html" class="quiz-nav-logo">Studio<span>Health</span></a>
+  <a href="index.html" class="quiz-nav-back">← Back to site</a>
+</nav>
+
+<div class="progress-track">
+  <div class="progress-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<div class="quiz-shell">
+  <div id="stepCounter" class="step-counter" style="color:rgba(255,255,255,0.5)"></div>
+  <div id="quizCard" class="quiz-card"></div>
+</div>
+
+<script>
+// ─── QUESTIONS ───────────────────────────────────────────────
+const questions = [
+  {
+    id: 'q1',
+    label: 'Step 1 of 6 — What brings you in?',
+    text: 'What is your main reason for seeking treatment?',
+    sub: 'Select the option that best describes what you\'re experiencing.',
+    multi: false,
+    options: [
+      { id: 'pain',     icon: '⚡', label: 'Pain or discomfort',    hint: 'Back, neck, joint, or muscle pain',           scores: { chiro: 3, rmt: 2, acu: 2, softwave: 1 } },
+      { id: 'injury',   icon: '🏃', label: 'Injury recovery',       hint: 'Sports injury, accident, or strain',           scores: { chiro: 3, rmt: 3, acu: 1, softwave: 3 } },
+      { id: 'stress',   icon: '🧘', label: 'Stress & tension',      hint: 'Mental load, muscle tightness, fatigue',       scores: { chiro: 1, rmt: 4, acu: 3, softwave: 0 } },
+      { id: 'chronic',  icon: '🔄', label: 'Chronic / ongoing',     hint: 'Condition that hasn\'t resolved with other care', scores: { chiro: 2, rmt: 2, acu: 4, softwave: 4 } },
+      { id: 'prevent',  icon: '🛡️', label: 'Prevention & wellness', hint: 'Proactive health maintenance',                 scores: { chiro: 2, rmt: 3, acu: 2, softwave: 0 } },
+      { id: 'accident', icon: '🚗', label: 'Motor vehicle accident', hint: 'ICBC claim / whiplash / MVA recovery',         scores: { chiro: 4, rmt: 3, acu: 1, softwave: 1 } },
+    ]
+  },
+  {
+    id: 'q2',
+    label: 'Step 2 of 6 — Where does it hurt?',
+    text: 'Which area of your body is most affected?',
+    sub: 'You can choose up to two areas.',
+    multi: true,
+    maxSelect: 2,
+    options: [
+      { id: 'spine',    icon: '🦴', label: 'Back / Spine',       hint: 'Upper, mid, or lower back',        scores: { chiro: 4, rmt: 2, acu: 2, softwave: 2 } },
+      { id: 'neck',     icon: '🔝', label: 'Neck / Shoulders',   hint: 'Cervical spine, traps, rotator cuff', scores: { chiro: 4, rmt: 3, acu: 2, softwave: 2 } },
+      { id: 'headache', icon: '🧠', label: 'Head / Headaches',   hint: 'Tension headaches, migraines',      scores: { chiro: 4, rmt: 3, acu: 4, softwave: 0 } },
+      { id: 'legs',     icon: '🦵', label: 'Hips / Legs / Feet', hint: 'Sciatica, knee, plantar fasciitis', scores: { chiro: 3, rmt: 2, acu: 2, softwave: 4 } },
+      { id: 'arms',     icon: '💪', label: 'Arms / Hands',       hint: 'Carpal tunnel, tennis elbow',       scores: { chiro: 2, rmt: 2, acu: 3, softwave: 3 } },
+      { id: 'fullbody', icon: '🌿', label: 'Whole body / General', hint: 'Widespread tension or fatigue',  scores: { chiro: 1, rmt: 4, acu: 3, softwave: 0 } },
+    ]
+  },
+  {
+    id: 'q3',
+    label: 'Step 3 of 6 — Duration',
+    text: 'How long have you been dealing with this?',
+    sub: 'The length of time helps us understand which therapies tend to be most effective.',
+    multi: false,
+    options: [
+      { id: 'acute',    icon: '⚡', label: 'Just started (< 2 weeks)',   hint: 'Recent onset, fairly acute',              scores: { chiro: 3, rmt: 3, acu: 1, softwave: 2 } },
+      { id: 'subacute', icon: '📅', label: 'A few weeks to 3 months',   hint: 'Sub-acute, still actively healing',       scores: { chiro: 3, rmt: 3, acu: 2, softwave: 2 } },
+      { id: 'chronic3', icon: '🔄', label: '3–12 months',               hint: 'Becoming persistent',                     scores: { chiro: 2, rmt: 2, acu: 3, softwave: 3 } },
+      { id: 'longterm', icon: '⏳', label: 'More than a year',          hint: 'Long-term / chronic condition',           scores: { chiro: 2, rmt: 2, acu: 4, softwave: 4 } },
+    ]
+  },
+  {
+    id: 'q4',
+    label: 'Step 4 of 6 — Intensity',
+    text: 'How would you rate your symptoms day-to-day?',
+    sub: '',
+    multi: false,
+    options: [
+      { id: 'mild',     icon: '🟢', label: 'Mild — noticeable but manageable',   hint: 'Doesn\'t stop you doing things',      scores: { chiro: 1, rmt: 3, acu: 2, softwave: 1 } },
+      { id: 'moderate', icon: '🟡', label: 'Moderate — affecting daily life',    hint: 'Some activities are limited',         scores: { chiro: 3, rmt: 3, acu: 3, softwave: 2 } },
+      { id: 'severe',   icon: '🔴', label: 'Severe — significantly limiting',    hint: 'Affecting work, sleep, or movement',  scores: { chiro: 4, rmt: 2, acu: 3, softwave: 3 } },
+      { id: 'plateau',  icon: '📊', label: 'Plateaued — tried other things',     hint: 'Treatment hasn\'t worked so far',     scores: { chiro: 2, rmt: 2, acu: 3, softwave: 5 } },
+    ]
+  },
+  {
+    id: 'q5',
+    label: 'Step 5 of 6 — Lifestyle',
+    text: 'Which of these best describes your daily life?',
+    sub: 'Select all that apply.',
+    multi: true,
+    maxSelect: 3,
+    options: [
+      { id: 'desk',     icon: '💻', label: 'Desk / sedentary work',       hint: 'Sitting for long hours',                  scores: { chiro: 3, rmt: 3, acu: 1, softwave: 0 } },
+      { id: 'active',   icon: '🏅', label: 'Active / athletic',           hint: 'Sports, training, physical work',         scores: { chiro: 2, rmt: 3, acu: 1, softwave: 3 } },
+      { id: 'physical', icon: '🔧', label: 'Physical labour',             hint: 'Lifting, repetitive movement, trades',    scores: { chiro: 3, rmt: 3, acu: 1, softwave: 2 } },
+      { id: 'stressed', icon: '😓', label: 'High stress / low sleep',     hint: 'Anxiety, tension, poor rest',             scores: { chiro: 1, rmt: 3, acu: 4, softwave: 0 } },
+      { id: 'pregnant', icon: '🤰', label: 'Pregnant or postpartum',      hint: 'Expecting or recently gave birth',        scores: { chiro: 2, rmt: 5, acu: 2, softwave: 0 } },
+      { id: 'elderly',  icon: '🧓', label: 'Older adult / reduced mobility', hint: 'Age-related stiffness or limitations', scores: { chiro: 2, rmt: 3, acu: 4, softwave: 2 } },
+    ]
+  },
+  {
+    id: 'q6',
+    label: 'Step 6 of 6 — Treatment preferences',
+    text: 'What matters most to you in a treatment?',
+    sub: 'Choose up to two.',
+    multi: true,
+    maxSelect: 2,
+    options: [
+      { id: 'fast',     icon: '⚡', label: 'Fast, targeted relief',        hint: 'I want results quickly',                 scores: { chiro: 4, rmt: 2, acu: 2, softwave: 3 } },
+      { id: 'relax',    icon: '🌿', label: 'Relaxation & recovery',        hint: 'I need to decompress and restore',       scores: { chiro: 0, rmt: 5, acu: 3, softwave: 0 } },
+      { id: 'holistic', icon: '🌀', label: 'Whole-body / root-cause focus', hint: 'I want to address underlying causes',   scores: { chiro: 3, rmt: 2, acu: 5, softwave: 1 } },
+      { id: 'gentle',   icon: '🤲', label: 'Gentle, non-invasive',         hint: 'I prefer a softer approach',            scores: { chiro: 1, rmt: 4, acu: 3, softwave: 4 } },
+      { id: 'covered',  icon: '💳', label: 'Insurance / ICBC covered',     hint: 'I need it covered by my plan',          scores: { chiro: 4, rmt: 4, acu: 2, softwave: 1 } },
+    ]
+  }
+];
+
+// ─── TREATMENT DATA ───────────────────────────────────────────
+const treatments = {
+  chiro: {
+    name: 'Chiropractic Care',
+    icon: '🦴',
+    color: 'var(--forest)',
+    bookUrl: 'https://studiohealth.janeapp.com/#/discipline/1/treatment/3',
+    conditions: ['Back pain', 'Neck pain', 'Sciatica', 'Headaches', 'ICBC claims', 'Sports injuries', 'Posture'],
+    whyTemplate: (answers) => {
+      const reasons = [];
+      if (answers.q1?.includes('pain') || answers.q1?.includes('injury')) reasons.push('directly targets musculoskeletal pain at its source through spinal adjustments');
+      if (answers.q2?.includes('spine') || answers.q2?.includes('neck')) reasons.push('specializes in spinal and cervical conditions like yours');
+      if (answers.q2?.includes('headache')) reasons.push('highly effective for tension headaches and cervicogenic migraines');
+      if (answers.q1?.includes('accident')) reasons.push('registered for ICBC with low co-pay for MVA recovery');
+      if (answers.q4?.includes('severe')) reasons.push('provides targeted, structural correction for significant symptom relief');
+      const base = 'Chiropractic care is a strong match because it ' + (reasons.length ? reasons.slice(0,2).join(' and ') : 'addresses joint mobility and nervous system function through hands-on adjustment');
+      return base + '. Your chiropractor will also assess whether Cold Laser or SoftWave therapy could complement treatment.';
+    }
+  },
+  rmt: {
+    name: 'Registered Massage Therapy',
+    icon: '🙌',
+    color: 'var(--sage)',
+    bookUrl: 'https://studiohealth.janeapp.com/#/discipline/2/treatment/146',
+    conditions: ['Muscle tension', 'Stress & anxiety', 'Injury recovery', 'Postural strain', 'Pregnancy', 'Sleep issues'],
+    whyTemplate: (answers) => {
+      const reasons = [];
+      if (answers.q1?.includes('stress')) reasons.push('directly releases soft tissue tension and activates the parasympathetic nervous system for deep recovery');
+      if (answers.q5?.includes('pregnant')) reasons.push('our RMTs are trained in prenatal massage with specialized positioning for all trimesters');
+      if (answers.q5?.includes('desk')) reasons.push('targets the chronic muscle imbalances caused by prolonged sitting and desk posture');
+      if (answers.q6?.includes('relax')) reasons.push('provides the restorative, full-body care you\'re looking for');
+      if (answers.q5?.includes('active')) reasons.push('supports athletic recovery and reduces DOMS between training sessions');
+      const base = 'RMT is well-suited to your situation because it ' + (reasons.length ? reasons.slice(0,2).join(' and ') : 'addresses soft tissue dysfunction, circulation, and muscle recovery through hands-on therapy');
+      return base + '. All our RMTs are BC-registered and receipts are provided for extended health claims.';
+    }
+  },
+  acu: {
+    name: 'Acupuncture',
+    icon: '🪡',
+    color: '#8a6a3d',
+    bookUrl: 'https://studiohealth.janeapp.com/#/discipline/2/treatment/146',
+    conditions: ['Chronic pain', 'Migraines', 'Stress & insomnia', 'Digestive issues', 'Anxiety', 'Hormonal health'],
+    whyTemplate: (answers) => {
+      const reasons = [];
+      if (answers.q3?.includes('chronic3') || answers.q3?.includes('longterm')) reasons.push('excels at addressing conditions that have become entrenched or haven\'t responded to other treatments');
+      if (answers.q1?.includes('stress') || answers.q5?.includes('stressed')) reasons.push('regulates the nervous system and reduces cortisol, making it highly effective for stress-driven symptoms');
+      if (answers.q2?.includes('headache')) reasons.push('has strong clinical evidence for reducing migraine frequency and tension headache intensity');
+      if (answers.q6?.includes('holistic')) reasons.push('takes a whole-body approach, addressing root causes rather than just symptoms');
+      const base = 'Acupuncture is a great fit because it ' + (reasons.length ? reasons.slice(0,2).join(' and ') : 'stimulates the body\'s natural healing response through precise needle placement along therapeutic pathways');
+      return base + '. Our acupuncturists integrate traditional and contemporary approaches tailored to your health picture.';
+    }
+  },
+  softwave: {
+    name: 'SoftWave Therapy',
+    icon: '⚡',
+    color: '#5a3d8a',
+    bookUrl: 'https://studiohealth.janeapp.com/',
+    conditions: ['Plantar fasciitis', 'Tendinopathy', 'Rotator cuff', 'Chronic pain', 'Non-healing tissue', 'Post-surgery'],
+    whyTemplate: (answers) => {
+      const reasons = [];
+      if (answers.q4?.includes('plateau')) reasons.push('is specifically designed for cases where other treatments have plateaued — it triggers deep tissue regeneration at the cellular level');
+      if (answers.q3?.includes('longterm') || answers.q3?.includes('chronic3')) reasons.push('is particularly effective for chronic, persistent conditions through acoustic wave stimulation');
+      if (answers.q2?.includes('legs')) reasons.push('has exceptional results for plantar fasciitis, Achilles tendinopathy, and knee conditions');
+      if (answers.q6?.includes('gentle')) reasons.push('is completely non-invasive with no needles, no downtime, and minimal discomfort');
+      if (answers.q5?.includes('active')) reasons.push('accelerates tissue repair for athletic tendon and soft tissue injuries');
+      const base = 'SoftWave Therapy stands out for your situation because it ' + (reasons.length ? reasons.slice(0,2).join(' and ') : 'uses unfocused shock waves to stimulate the body\'s regenerative response in damaged tissue');
+      return base + '. Available exclusively through our chiropractors — ask about combining it with your adjustment.';
+    }
+  }
+};
+
+// ─── STATE ────────────────────────────────────────────────────
+let currentStep = -1; // -1 = intro
+const answers = {};
+const totalSteps = questions.length;
+
+// ─── RENDER ───────────────────────────────────────────────────
+function render() {
+  const card = document.getElementById('quizCard');
+  const counter = document.getElementById('stepCounter');
+  const progress = document.getElementById('progressFill');
+
+  if (currentStep === -1) {
+    counter.textContent = '';
+    progress.style.width = '0%';
+    card.innerHTML = renderIntro();
+    return;
+  }
+
+  if (currentStep >= totalSteps) {
+    counter.textContent = 'Your Results';
+    progress.style.width = '100%';
+    card.innerHTML = renderResults();
+    animateMatchBars();
+    return;
+  }
+
+  const q = questions[currentStep];
+  const pct = ((currentStep) / totalSteps * 100);
+  progress.style.width = pct + '%';
+  counter.textContent = q.label;
+
+  const sel = answers[q.id] || [];
+
+  card.innerHTML = `
+    <div class="q-label">${q.label}</div>
+    <div class="q-text">${q.text}</div>
+    ${q.sub ? `<div class="q-sub">${q.sub}</div>` : ''}
+    ${q.multi ? `<div class="q-multi-hint">Select up to ${q.maxSelect}</div>` : ''}
+    <div class="options ${q.options.length <= 4 ? '' : 'two-col'}" id="options">
+      ${q.options.map(o => `
+        <div class="opt ${sel.includes(o.id) ? 'selected' : ''}" data-id="${o.id}" onclick="selectOpt('${q.id}','${o.id}',${q.multi},${q.maxSelect||1})">
+          <div class="opt-icon">${o.icon}</div>
+          <div class="opt-text">
+            <span class="opt-label">${o.label}</span>
+            ${o.hint ? `<span class="opt-hint">${o.hint}</span>` : ''}
+          </div>
+          <div class="opt-check"></div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="quiz-nav-btns">
+      <button class="btn-back" onclick="goBack()" ${currentStep === 0 ? 'disabled' : ''}>← Back</button>
+      <button class="btn-next" id="btnNext" onclick="goNext()" ${sel.length === 0 ? 'disabled' : ''}>
+        ${currentStep === totalSteps - 1 ? 'See My Results' : 'Next'}
+        <span class="arrow">→</span>
+      </button>
+    </div>
+  `;
+}
+
+function renderIntro() {
+  return `
+    <div class="intro-card" style="margin:0 auto; text-align:center">
+      <div class="intro-icon">🩺</div>
+      <h1 class="intro-title">Find your <em>ideal</em><br>treatment</h1>
+      <p class="intro-body">
+        Answer 6 quick questions and we'll recommend the StudioHealth treatments most likely to help your specific situation — and explain exactly why.
+      </p>
+      <div class="intro-pills">
+        <span class="intro-pill">🦴 Chiropractic</span>
+        <span class="intro-pill">🙌 Massage Therapy</span>
+        <span class="intro-pill">🪡 Acupuncture</span>
+        <span class="intro-pill">⚡ SoftWave</span>
+      </div>
+      <button class="btn-start" onclick="startQuiz()">
+        Start Assessment <span>→</span>
+      </button>
+      <div class="intro-meta">Takes about 2 minutes · No sign-up required</div>
+    </div>
+  `;
+}
+
+function renderResults() {
+  const scores = { chiro: 0, rmt: 0, acu: 0, softwave: 0 };
+
+  questions.forEach(q => {
+    const sel = answers[q.id] || [];
+    sel.forEach(id => {
+      const opt = q.options.find(o => o.id === id);
+      if (opt) {
+        Object.keys(scores).forEach(k => { scores[k] += (opt.scores[k] || 0); });
+      }
+    });
+  });
+
+  const maxScore = Math.max(...Object.values(scores));
+  const ranked = Object.entries(scores)
+    .map(([k,v]) => ({ key: k, score: v, pct: Math.round((v / maxScore) * 100) }))
+    .sort((a,b) => b.score - a.score);
+
+  const primary = ranked[0];
+  const secondary = ranked.slice(1,3).filter(r => r.pct >= 40);
+
+  const renderRec = (r, rank) => {
+    const t = treatments[r.key];
+    const isPrimary = rank === 0;
+    return `
+      <div class="rec-card ${isPrimary ? 'primary' : 'secondary'}">
+        <div class="rec-header">
+          <div class="rec-icon">${t.icon}</div>
+          <div class="rec-meta">
+            <div class="rec-rank">${isPrimary ? '★ Top Recommendation' : '✓ Also Recommended'}</div>
+            <div class="rec-name">${t.name}</div>
+          </div>
+        </div>
+        <div class="match-bar-wrap">
+          <div class="match-bar-track">
+            <div class="match-bar-fill" data-width="${r.pct}" style="width:0%"></div>
+          </div>
+          <div class="match-pct">${r.pct}% match</div>
+        </div>
+        <div class="rec-why">${t.whyTemplate(answers)}</div>
+        <div class="rec-conditions">
+          ${t.conditions.map(c => `<span class="cond-tag">${c}</span>`).join('')}
+        </div>
+      </div>
+    `;
+  };
+
+  const primaryT = treatments[primary.key];
+
+  return `
+    <div class="results-header">
+      <div class="results-badge">✓ Assessment Complete</div>
+      <div class="results-title">Here's what we <em>recommend</em></div>
+      <p class="results-sub">Based on your answers, these treatments are the strongest fit for your situation.</p>
+    </div>
+    <div class="recs">
+      ${renderRec(primary, 0)}
+      ${secondary.map((r,i) => renderRec(r, i+1)).join('')}
+    </div>
+    <div class="results-cta">
+      <p>These are personalized recommendations, not a diagnosis. Our practitioners will confirm the right approach at your first visit — which is always a thorough one-on-one assessment.</p>
+      <div class="cta-btns">
+        <a href="${primaryT.bookUrl}" target="_blank" class="btn-book">Book ${primaryT.name} →</a>
+        <a href="https://studiohealth.janeapp.com/" target="_blank" class="btn-book" style="background:rgba(255,255,255,0.12); color:white;">See All Availability</a>
+        <button class="btn-retake" onclick="retake()">Retake Quiz</button>
+      </div>
+      <div class="disclaimer">This tool is for informational purposes only and does not constitute medical advice. Always consult a qualified healthcare practitioner for diagnosis and treatment.</div>
+    </div>
+  `;
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────
+function animateMatchBars() {
+  setTimeout(() => {
+    document.querySelectorAll('.match-bar-fill').forEach(el => {
+      el.style.width = el.dataset.width + '%';
+    });
+  }, 100);
+}
+
+function selectOpt(qId, optId, multi, maxSelect) {
+  const sel = answers[qId] || [];
+  if (multi) {
+    const idx = sel.indexOf(optId);
+    if (idx > -1) {
+      answers[qId] = sel.filter(id => id !== optId);
+    } else if (sel.length < maxSelect) {
+      answers[qId] = [...sel, optId];
+    }
+  } else {
+    answers[qId] = [optId];
+  }
+  render();
+}
+
+function goNext() {
+  const card = document.getElementById('quizCard');
+  card.classList.add('card-exit');
+  setTimeout(() => {
+    card.classList.remove('card-exit');
+    currentStep++;
+    render();
+  }, 220);
+}
+
+function goBack() {
+  if (currentStep <= 0) { currentStep = -1; }
+  else { currentStep--; }
+  render();
+}
+
+function startQuiz() {
+  currentStep = 0;
+  render();
+}
+
+function retake() {
+  Object.keys(answers).forEach(k => delete answers[k]);
+  currentStep = -1;
+  render();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
