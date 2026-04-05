@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Appointment Cancellation Notifier</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2ee;
+    --surface: #ffffff;
+    --surface2: #faf8f5;
+    --border: #e8e2d9;
+    --text: #1a1714;
+    --text-muted: #7a736b;
+    --accent: #2d5a4a;
+    --accent-light: #e8f0ec;
+    --accent2: #c4623a;
+    --accent2-light: #fdf0eb;
+    --warn: #b8490a;
+    --success: #2d5a4a;
+    --tag-email: #e8f0ec;
+    --tag-sms: #fdf0eb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+  }
+
+  header {
+    background: var(--accent);
+    color: white;
+    padding: 28px 40px 24px;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+  }
+
+  header .clinic-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1;
+  }
+
+  header .badge {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 0;
+    min-height: calc(100vh - 90px);
+  }
+
+  .main-panel {
+    padding: 36px 40px;
+    border-right: 1px solid var(--border);
+  }
+
+  .side-panel {
+    padding: 36px 32px;
+    background: var(--surface2);
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  /* Step indicator */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 36px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .step.active { color: var(--accent); }
+  .step.done { color: var(--accent); }
+
+  .step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .step.active .step-num, .step.done .step-num {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+
+  .step-divider {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin: 0 12px;
+    max-width: 48px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-title .icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    background: var(--accent-light);
+  }
+
+  /* Form elements */
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  input[type="text"], input[type="date"], select, textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: white;
+    transition: border-color 0.2s;
+    outline: none;
+    appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+  }
+
+  .form-row {
+    margin-bottom: 18px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  /* Method toggle */
+  .method-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .method-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .method-btn.active-email {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  .method-btn.active-sms {
+    border-color: var(--accent2);
+    background: var(--accent2-light);
+    color: var(--accent2);
+  }
+
+  /* Patient list */
+  .patient-list-area {
+    border: 1.5px dashed var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    background: var(--surface2);
+    min-height: 100px;
+    margin-bottom: 12px;
+  }
+
+  .patient-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    font-size: 14px;
+  }
+
+  .patient-row:last-child { border-bottom: none; }
+
+  .patient-row input {
+    padding: 7px 10px;
+    font-size: 13px;
+    margin-bottom: 0;
+  }
+
+  .patient-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .tag-email { background: var(--tag-email); color: var(--accent); }
+  .tag-sms { background: var(--tag-sms); color: var(--accent2); }
+  .tag-both { background: #eef3fb; color: #2755a0; }
+
+  .btn-icon {
+    width: 30px; height: 30px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    color: var(--text-muted);
+    transition: background 0.15s;
+  }
+
+  .btn-icon:hover { background: #fee; color: #c00; }
+
+  .empty-list {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 20px 0;
+  }
+
+  /* Action buttons */
+  .btn {
+    padding: 11px 22px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: #234839; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: white;
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-danger {
+    background: var(--accent2);
+    color: white;
+  }
+
+  .btn-danger:hover { background: #b05030; }
+
+  .btn-sm { padding: 7px 14px; font-size: 13px; }
+
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* Preview pane */
+  .preview-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 140px;
+  }
+
+  .preview-box .preview-subject {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .preview-placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  /* Stats */
+  .stat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  /* Send log */
+  .log-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .log-item:last-child { border-bottom: none; }
+
+  .log-status {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .status-sent { background: var(--success); }
+  .status-pending { background: #f5a623; }
+  .status-failed { background: #d0021b; }
+
+  .log-name { font-weight: 500; flex: 1; }
+  .log-contact { color: var(--text-muted); font-size: 12px; }
+  .log-method { font-size: 11px; }
+
+  /* Alert banner */
+  .alert {
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .alert-warn {
+    background: #fff8e6;
+    border: 1px solid #f5c842;
+    color: #7a5a00;
+  }
+
+  .alert-info {
+    background: var(--accent-light);
+    border: 1px solid #b4d4c4;
+    color: #1a3d2e;
+  }
+
+  /* Tabs */
+  .tab-row {
+    display: flex;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .tab {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* Section transitions */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Import area */
+  .import-area {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+    margin-bottom: 12px;
+  }
+
+  .import-area:hover { border-color: var(--accent); background: var(--accent-light); }
+
+  .import-icon { font-size: 28px; margin-bottom: 8px; }
+  .import-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .import-text strong { color: var(--text); }
+
+  /* Template variables chips */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .chip {
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid #b4d4c4;
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: monospace;
+  }
+  .chip:hover { background: var(--accent); color: white; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: white;
+    border-radius: 16px;
+    padding: 36px;
+    width: 500px;
+    max-width: 90vw;
+    transform: translateY(10px);
+    transition: transform 0.2s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .modal p { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+  .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+
+  /* Progress bar */
+  .progress-wrap { background: var(--border); border-radius: 20px; height: 8px; overflow: hidden; margin: 12px 0; }
+  .progress-bar { height: 100%; background: var(--accent); border-radius: 20px; transition: width 0.3s; }
+
+  /* Scrollable log */
+  .log-scroll { max-height: 280px; overflow-y: auto; }
+
+  /* CSV note */
+  .csv-format {
+    background: #f0f0f0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: monospace;
+    font-size: 12px;
+    color: #444;
+    margin-top: 8px;
+  }
+
+  .notice {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #7a4400;
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="clinic-name">StudioHealth · 4196 Main Street, Vancouver</div>
+    <h1>Appointment Cancellation Notifier</h1>
+  </div>
+  <div class="badge">⚕ Admin Tool</div>
+</header>
+
+<div class="layout">
+  <!-- MAIN PANEL -->
+  <div class="main-panel">
+
+    <div class="steps">
+      <div class="step active" id="step-1-indicator" onclick="goToStep(1)">
+        <div class="step-num">1</div> Compose Message
+      </div>
+      <div class="step-divider"></div>
+      <div class="step" id="step-2-indicator" onclick="goToStep(2)">
+        <div class="step-num">2</div> Patient List
+      </div>
+      <div class="step-divider"></div>
+      <div class="step" id="step-3-indicator" onclick="goToStep(3)">
+        <div class="step-num">3</div> Review & Send
+      </div>
+    </div>
+
+    <!-- STEP 1: Compose -->
+    <div class="panel active" id="step-1">
+
+      <div class="card">
+        <div class="card-title">
+          <div class="icon">📋</div> Cancellation Details
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Doctor / Practitioner</label>
+            <select id="doctor-select" onchange="updatePreview()">
+              <option value="">Select practitioner…</option>
+              <option value="Dr. Omar Elesseily">Dr. Omar Elesseily</option>
+              <option value="Dr. Robin Ferguson">Dr. Robin Ferguson</option>
+              <option value="Dr. Jessica Higgs">Dr. Jessica Higgs</option>
+              <option value="Dr. Lauren">Dr. Lauren (you)</option>
+              <option value="custom">Other…</option>
+            </select>
+          </div>
+          <div class="form-row" id="custom-doctor-row" style="display:none;">
+            <label>Custom Name</label>
+            <input type="text" id="custom-doctor" placeholder="Dr. Name" oninput="updatePreview()">
+          </div>
+          <div class="form-row">
+            <label>Affected Date</label>
+            <input type="date" id="affected-date" onchange="updatePreview()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Cancellation Reason</label>
+          <select id="reason-select" onchange="reasonChanged()">
+            <option value="is out sick today">Sick (same-day)</option>
+            <option value="has a medical emergency">Medical Emergency</option>
+            <option value="has an unexpected personal matter">Personal/Family Emergency</option>
+            <option value="will be away for a scheduled closure">Scheduled Closure</option>
+            <option value="custom">Other…</option>
+          </select>
+        </div>
+        <div class="form-row" id="custom-reason-row" style="display:none;">
+          <label>Custom Reason</label>
+          <input type="text" id="custom-reason" placeholder="e.g., is attending a continuing education course" oninput="updatePreview()">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="icon">📬</div> Notification Method
+        </div>
+
+        <div class="method-toggle">
+          <button class="method-btn active-email" id="btn-email" onclick="setMethod('email')">
+            ✉️ Email Only
+          </button>
+          <button class="method-btn" id="btn-sms" onclick="setMethod('sms')">
+            💬 SMS / Text Only
+          </button>
+          <button class="method-btn" id="btn-both" onclick="setMethod('both')">
+            📨 Both (Email + SMS)
+          </button>
+        </div>
+
+        <div id="email-fields">
+          <div class="form-row">
+            <label>Email Subject Line</label>
+            <input type="text" id="email-subject" value="Important: Your Appointment Has Been Cancelled" oninput="updatePreview()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Message Body</label>
+          <div class="chip-row">
+            <span style="font-size:12px; color:var(--text-muted); align-self:center;">Insert:</span>
+            <span class="chip" onclick="insertVar('{patient_name}')">{patient_name}</span>
+            <span class="chip" onclick="insertVar('{doctor}')">{doctor}</span>
+            <span class="chip" onclick="insertVar('{date}')">{date}</span>
+            <span class="chip" onclick="insertVar('{time}')">{time}</span>
+            <span class="chip" onclick="insertVar('{clinic_name}')">{clinic_name}</span>
+            <span class="chip" onclick="insertVar('{clinic_phone}')">{clinic_phone}</span>
+          </div>
+          <textarea id="message-body" oninput="updatePreview()" rows="7"></textarea>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="goToStep(2)">Next: Add Patients →</button>
+        <button class="btn btn-secondary btn-sm" onclick="resetMessage()">↺ Reset to Default</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Patient List -->
+    <div class="panel" id="step-2">
+
+      <div class="card">
+        <div class="card-title">
+          <div class="icon">👥</div> Patient List
+        </div>
+
+        <div class="tab-row">
+          <div class="tab active" onclick="switchTab('manual')">Add Manually</div>
+          <div class="tab" onclick="switchTab('import')">Import CSV</div>
+        </div>
+
+        <div id="tab-manual">
+          <div id="patient-list" class="patient-list-area">
+            <div class="patient-row" style="font-size:12px; font-weight:600; color:var(--text-muted); padding-bottom:6px;">
+              <span>Patient Name</span>
+              <span>Email Address</span>
+              <span>Phone (SMS)</span>
+              <span>Time</span>
+            </div>
+            <div id="patient-rows"></div>
+            <div id="empty-msg" class="empty-list">No patients added yet. Click "+ Add Patient" below.</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="addPatientRow()">+ Add Patient</button>
+        </div>
+
+        <div id="tab-import" style="display:none;">
+          <div class="import-area" onclick="triggerFileInput()">
+            <div class="import-icon">📄</div>
+            <div class="import-text">
+              <strong>Click to upload a CSV file</strong><br>
+              or paste your export from Jane App, Mindbody, or any scheduling software
+            </div>
+          </div>
+          <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="handleCSV(event)">
+          <div class="csv-format">name,email,phone,time<br>Jane Smith,jane@email.com,6045551234,10:30 AM<br>John Doe,john@email.com,,2:15 PM</div>
+          <div class="notice">
+            💡 Leave <strong>email</strong> blank if patient only has SMS. Leave <strong>phone</strong> blank for email only. Both fields = both methods sent.
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:24px;">
+        <button class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
+        <button class="btn btn-primary" onclick="goToStep(3)">Next: Review & Send →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Review & Send -->
+    <div class="panel" id="step-3">
+
+      <div class="alert alert-warn" id="send-warning">
+        ⚠️ <span>Review all details carefully before sending. Messages <strong>cannot be recalled</strong> once sent.</span>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="icon">📊</div> Summary
+        </div>
+        <div class="stat-row">
+          <div class="stat-box">
+            <div class="stat-num" id="count-total">0</div>
+            <div class="stat-label">Total Patients</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="count-email" style="color:var(--accent)">0</div>
+            <div class="stat-label">Email Recipients</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="count-sms" style="color:var(--accent2)">0</div>
+            <div class="stat-label">SMS Recipients</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" id="count-both" style="color:#2755a0">0</div>
+            <div class="stat-label">Both Methods</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <div class="icon">👁</div> Message Preview
+        </div>
+        <div id="preview-method-label" style="margin-bottom:10px;"></div>
+        <div class="preview-box">
+          <div class="preview-subject" id="preview-subject-line" style="display:none;"></div>
+          <div id="preview-content" class="preview-placeholder">← Fill in details in Step 1 to see preview</div>
+        </div>
+      </div>
+
+      <div class="card" id="send-log-card" style="display:none;">
+        <div class="card-title">
+          <div class="icon">📤</div> Send Log
+        </div>
+        <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+        <div id="progress-text" style="font-size:13px; color:var(--text-muted); margin-bottom:12px;"></div>
+        <div class="log-scroll">
+          <div id="send-log"></div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToStep(2)">← Back</button>
+        <button class="btn btn-danger" id="send-btn" onclick="openConfirmModal()">
+          📤 Send All Notifications
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="exportLog()">↓ Export Log</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SIDE PANEL -->
+  <div class="side-panel">
+    <div class="section-label">Live Preview</div>
+
+    <div id="side-method-badge" style="margin-bottom:12px;"></div>
+
+    <div class="preview-box" style="min-height:200px;">
+      <div class="preview-subject" id="side-subject" style="display:none;"></div>
+      <div id="side-preview">
+        <span class="preview-placeholder">Your message will appear here as you type…</span>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <div class="section-label">Clinic Settings</div>
+      <div class="form-row">
+        <label>Clinic Name</label>
+        <input type="text" id="setting-clinic-name" value="StudioHealth" oninput="updatePreview()">
+      </div>
+      <div class="form-row">
+        <label>Clinic Phone</label>
+        <input type="text" id="setting-phone" value="604-569-2888" oninput="updatePreview()">
+      </div>
+      <div class="form-row">
+        <label>Rebooking URL / Link</label>
+        <input type="text" id="setting-rebook" value="studiohealth.janeapp.com" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <div class="section-label">Integration Options</div>
+      <div class="alert alert-info" style="font-size:12px; line-height:1.6;">
+        <div>
+          <strong>Real sending requires:</strong><br>
+          <br>
+          📧 <strong>Email:</strong> SendGrid, Mailchimp Transactional, or AWS SES — connect via API key<br>
+          <br>
+          💬 <strong>SMS:</strong> Twilio, TextMagic, or SimpleTexting — CASL-compliant, requires opt-in<br>
+          <br>
+          📋 <strong>Jane App:</strong> Export today's appointments as CSV → import here<br>
+          <br>
+          This tool generates the messages & logs. Ask for the send integration when you're ready.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal">
+    <h2>Confirm Send</h2>
+    <p id="confirm-modal-body">You are about to send cancellation notifications to <strong id="confirm-count">0</strong> patients. This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="startSend()">Yes, Send Now</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let method = 'email';
+let patients = [];
+let activeTab = 'manual';
+let sendLog = [];
+
+// Default message templates
+const templates = {
+  email: `Hi {patient_name},
+
+We're writing to let you know that your appointment with {doctor} on {date} at {time} has been cancelled, as {doctor} {reason}.
+
+We sincerely apologize for the short notice and any inconvenience this may cause.
+
+To rebook at your earliest convenience, please visit:
+{rebook_link}
+
+Or call us directly at {clinic_phone} and our team will be happy to help.
+
+Thank you for your understanding.
+
+Warm regards,
+{clinic_name} Team`,
+
+  sms: `Hi {patient_name} — your appt with {doctor} on {date} at {time} has been cancelled ({reason}). To rebook: {rebook_link} or call {clinic_phone}. Sorry for the inconvenience! — {clinic_name}`
+};
+
+// Init
+window.onload = () => {
+  document.getElementById('message-body').value = templates.email;
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('affected-date').value = today;
+  updatePreview();
+};
+
+function setMethod(m) {
+  method = m;
+  ['email','sms','both'].forEach(b => {
+    const el = document.getElementById('btn-' + b);
+    el.className = 'method-btn';
+    if(b === m) el.className = 'method-btn active-' + (m==='both' ? 'email' : m);
+  });
+  const emailFields = document.getElementById('email-fields');
+  emailFields.style.display = (m === 'sms') ? 'none' : 'block';
+
+  // Update template
+  if(m === 'sms') {
+    document.getElementById('message-body').value = templates.sms;
+  } else {
+    document.getElementById('message-body').value = templates.email;
+  }
+  updatePreview();
+}
+
+function getDoctorName() {
+  const sel = document.getElementById('doctor-select').value;
+  if(sel === 'custom') return document.getElementById('custom-doctor').value || '{doctor}';
+  return sel || '{doctor}';
+}
+
+function getReasonText() {
+  const sel = document.getElementById('reason-select').value;
+  if(sel === 'custom') return document.getElementById('custom-reason').value || '{reason}';
+  return sel;
+}
+
+function getFormattedDate() {
+  const val = document.getElementById('affected-date').value;
+  if(!val) return '{date}';
+  const d = new Date(val + 'T12:00:00');
+  return d.toLocaleDateString('en-CA', { weekday:'long', month:'long', day:'numeric', year:'numeric'});
+}
+
+function renderMessage(body, patient = null) {
+  const doctor = getDoctorName();
+  const reason = getReasonText();
+  const date = getFormattedDate();
+  const clinic = document.getElementById('setting-clinic-name').value || 'StudioHealth';
+  const phone = document.getElementById('setting-phone').value || '{clinic_phone}';
+  const rebook = document.getElementById('setting-rebook').value || '{rebook_link}';
+  const name = patient ? patient.name : 'Sarah';
+  const time = patient ? (patient.time || '{time}') : '10:30 AM';
+
+  return body
+    .replace(/{patient_name}/g, name)
+    .replace(/{doctor}/g, doctor)
+    .replace(/{date}/g, date)
+    .replace(/{time}/g, time)
+    .replace(/{reason}/g, reason)
+    .replace(/{clinic_name}/g, clinic)
+    .replace(/{clinic_phone}/g, phone)
+    .replace(/{rebook_link}/g, rebook);
+}
+
+function updatePreview() {
+  const body = document.getElementById('message-body').value;
+  const subject = document.getElementById('email-subject') ? document.getElementById('email-subject').value : '';
+  const rendered = renderMessage(body);
+
+  // Side preview
+  const sidePreview = document.getElementById('side-preview');
+  sidePreview.innerHTML = '';
+  sidePreview.style.whiteSpace = 'pre-wrap';
+  sidePreview.textContent = rendered;
+
+  // Subject
+  const sideSubEl = document.getElementById('side-subject');
+  if(method !== 'sms' && subject) {
+    sideSubEl.style.display = 'block';
+    sideSubEl.textContent = 'Subject: ' + subject;
+  } else {
+    sideSubEl.style.display = 'none';
+  }
+
+  // Method badge
+  const badges = { email: '<span class="patient-tag tag-email">✉️ Email</span>', sms: '<span class="patient-tag tag-sms">💬 SMS</span>', both: '<span class="patient-tag tag-both">📨 Email + SMS</span>' };
+  document.getElementById('side-method-badge').innerHTML = badges[method] || '';
+
+  // Step 3 preview
+  const pc = document.getElementById('preview-content');
+  const ps = document.getElementById('preview-subject-line');
+  if(pc) {
+    pc.style.whiteSpace = 'pre-wrap';
+    pc.textContent = rendered;
+    pc.className = '';
+  }
+  if(ps) {
+    if(method !== 'sms' && subject) {
+      ps.style.display = 'block';
+      ps.textContent = 'Subject: ' + subject;
+    } else {
+      ps.style.display = 'none';
+    }
+  }
+
+  updateCounts();
+}
+
+function reasonChanged() {
+  const sel = document.getElementById('reason-select').value;
+  document.getElementById('custom-reason-row').style.display = sel === 'custom' ? 'block' : 'none';
+  updatePreview();
+}
+
+document.getElementById('doctor-select').addEventListener('change', function() {
+  document.getElementById('custom-doctor-row').style.display = this.value === 'custom' ? 'block' : 'none';
+  updatePreview();
+});
+
+function insertVar(v) {
+  const ta = document.getElementById('message-body');
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  ta.value = ta.value.slice(0, start) + v + ta.value.slice(end);
+  ta.selectionStart = ta.selectionEnd = start + v.length;
+  ta.focus();
+  updatePreview();
+}
+
+function resetMessage() {
+  document.getElementById('message-body').value = method === 'sms' ? templates.sms : templates.email;
+  updatePreview();
+}
+
+// Patient rows
+let patientIdCounter = 0;
+
+function addPatientRow(data = {}) {
+  const id = ++patientIdCounter;
+  const empty = document.getElementById('empty-msg');
+  if(empty) empty.style.display = 'none';
+
+  const row = document.createElement('div');
+  row.className = 'patient-row';
+  row.id = 'prow-' + id;
+  row.innerHTML = `
+    <input type="text" placeholder="Full Name" value="${data.name||''}" oninput="syncPatients()">
+    <input type="text" placeholder="email@example.com" value="${data.email||''}" oninput="syncPatients()">
+    <input type="text" placeholder="6045551234" value="${data.phone||''}" oninput="syncPatients()">
+    <input type="text" placeholder="10:30 AM" value="${data.time||''}" oninput="syncPatients()" style="max-width:90px;">
+    <button class="btn-icon" onclick="removeRow(${id})" title="Remove">✕</button>
+  `;
+  document.getElementById('patient-rows').appendChild(row);
+  syncPatients();
+}
+
+function removeRow(id) {
+  const el = document.getElementById('prow-' + id);
+  if(el) el.remove();
+  syncPatients();
+  if(document.getElementById('patient-rows').children.length === 0) {
+    document.getElementById('empty-msg').style.display = 'block';
+  }
+}
+
+function syncPatients() {
+  patients = [];
+  const rows = document.querySelectorAll('#patient-rows .patient-row');
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    patients.push({ name: inputs[0].value.trim(), email: inputs[1].value.trim(), phone: inputs[2].value.trim(), time: inputs[3].value.trim() });
+  });
+  updateCounts();
+}
+
+function updateCounts() {
+  const total = patients.filter(p => p.name).length;
+  const emailOnly = patients.filter(p => p.name && p.email && !p.phone).length;
+  const smsOnly = patients.filter(p => p.name && p.phone && !p.email).length;
+  const both = patients.filter(p => p.name && p.email && p.phone).length;
+
+  const ct = document.getElementById('count-total');
+  const ce = document.getElementById('count-email');
+  const cs = document.getElementById('count-sms');
+  const cb = document.getElementById('count-both');
+  if(ct) ct.textContent = total;
+  if(ce) ce.textContent = emailOnly + both;
+  if(cs) cs.textContent = smsOnly + both;
+  if(cb) cb.textContent = both;
+
+  const cc = document.getElementById('confirm-count');
+  if(cc) cc.textContent = total;
+}
+
+// CSV import
+function triggerFileInput() { document.getElementById('csv-file').click(); }
+
+function handleCSV(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const lines = ev.target.result.split('\n').filter(l => l.trim());
+    const header = lines[0].toLowerCase().split(',');
+    const ni = header.findIndex(h => h.includes('name'));
+    const ei = header.findIndex(h => h.includes('email'));
+    const pi = header.findIndex(h => h.includes('phone'));
+    const ti = header.findIndex(h => h.includes('time'));
+
+    // Clear current rows
+    document.getElementById('patient-rows').innerHTML = '';
+    patients = [];
+    patientIdCounter = 0;
+
+    lines.slice(1).forEach(line => {
+      const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g,''));
+      addPatientRow({
+        name: ni >= 0 ? cols[ni] : cols[0] || '',
+        email: ei >= 0 ? cols[ei] : cols[1] || '',
+        phone: pi >= 0 ? cols[pi] : cols[2] || '',
+        time: ti >= 0 ? cols[ti] : cols[3] || ''
+      });
+    });
+    switchTab('manual');
+    goToStep(2);
+  };
+  reader.readAsText(file);
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.classList.toggle('active', (i===0 && tab==='manual') || (i===1 && tab==='import'));
+  });
+  document.getElementById('tab-manual').style.display = tab === 'manual' ? 'block' : 'none';
+  document.getElementById('tab-import').style.display = tab === 'import' ? 'block' : 'none';
+}
+
+// Step navigation
+function goToStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('step-'+i).classList.toggle('active', i===n);
+    const ind = document.getElementById('step-'+i+'-indicator');
+    ind.classList.toggle('active', i===n);
+    ind.classList.toggle('done', i < n);
+  });
+  if(n === 3) updateCounts();
+  window.scrollTo(0,0);
+}
+
+// Modal
+function openConfirmModal() {
+  updateCounts();
+  document.getElementById('confirm-modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('confirm-modal').classList.remove('open');
+}
+
+// Simulated send
+function startSend() {
+  closeModal();
+  document.getElementById('send-warning').style.display = 'none';
+  document.getElementById('send-log-card').style.display = 'block';
+  document.getElementById('send-btn').disabled = true;
+
+  const validPatients = patients.filter(p => p.name);
+  const log = document.getElementById('send-log');
+  const progress = document.getElementById('progress-bar');
+  const progText = document.getElementById('progress-text');
+  log.innerHTML = '';
+  sendLog = [];
+  let done = 0;
+
+  function sendNext(i) {
+    if(i >= validPatients.length) {
+      progText.textContent = `✅ Done! Sent to ${done} patient(s).`;
+      progress.style.width = '100%';
+      document.getElementById('send-btn').disabled = false;
+      return;
+    }
+    const p = validPatients[i];
+    const pct = Math.round((i / validPatients.length) * 100);
+    progress.style.width = pct + '%';
+    progText.textContent = `Sending ${i+1} of ${validPatients.length}…`;
+
+    const hasEmail = !!p.email;
+    const hasPhone = !!p.phone;
+    const sendEmail = method !== 'sms' && hasEmail;
+    const sendSMS = method !== 'email' && hasPhone;
+    const tagHtml = sendEmail && sendSMS ? '<span class="patient-tag tag-both">both</span>' :
+                    sendEmail ? '<span class="patient-tag tag-email">email</span>' :
+                    sendSMS ? '<span class="patient-tag tag-sms">sms</span>' :
+                    '<span style="color:#999;font-size:11px;">no contact info</span>';
+
+    const success = !!(sendEmail || sendSMS);
+    const entry = {
+      name: p.name,
+      contact: sendEmail ? p.email : p.phone,
+      method: sendEmail && sendSMS ? 'both' : sendEmail ? 'email' : 'sms',
+      status: success ? 'sent' : 'skipped',
+      time: new Date().toLocaleTimeString()
+    };
+    sendLog.push(entry);
+
+    const item = document.createElement('div');
+    item.className = 'log-item';
+    item.innerHTML = `
+      <div class="log-status ${success ? 'status-sent' : 'status-failed'}"></div>
+      <span class="log-name">${p.name}</span>
+      <span class="log-contact">${p.email || p.phone || '—'}</span>
+      ${tagHtml}
+      <span style="font-size:11px; color:var(--text-muted); margin-left:auto;">${entry.time}</span>
+    `;
+    log.appendChild(item);
+    log.scrollTop = log.scrollHeight;
+    done += success ? 1 : 0;
+
+    setTimeout(() => sendNext(i + 1), 350 + Math.random() * 300);
+  }
+
+  setTimeout(() => sendNext(0), 400);
+}
+
+function exportLog() {
+  if(!sendLog.length) { alert('No send log yet. Run a send first.'); return; }
+  const rows = [['Patient','Contact','Method','Status','Time']];
+  sendLog.forEach(e => rows.push([e.name, e.contact, e.method, e.status, e.time]));
+  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv,' + encodeURIComponent(csv);
+  a.download = 'cancellation-send-log.csv';
+  a.click();
+}
+</script>
+</body>
+</html>
